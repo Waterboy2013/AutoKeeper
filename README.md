@@ -1,4 +1,4 @@
-# AutoKeeper 🛢️
+# AutoKeeper
 ### Vehicle Maintenance Tracker
 
 A clean, private, offline-first web app for tracking everything your car needs — oil changes, tires, fluids, undercoating, and more. Installable on your phone like a native app. No account. No subscription. No ads. Your data never leaves your device.
