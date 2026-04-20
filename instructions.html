@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoKeeper — Setup Instructions</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap');
+
+    :root {
+      --bg: #f0f2f7;
+      --surface: #ffffff;
+      --border: #e0e3ee;
+      --text: #1a1b24;
+      --muted: #666;
+      --faint: #999;
+      --accent: #c0392b;
+      --green: #1e8449;
+      --green-bg: #f0faf4;
+      --green-border: #27ae60;
+      --blue: #1a6fa0;
+      --blue-bg: #eaf6fe;
+      --blue-border: #3498db;
+      --orange: #b7770d;
+      --orange-bg: #fffbf0;
+      --orange-border: #f0c040;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0c10;
+        --surface: #13141a;
+        --border: #1e2030;
+        --text: #e0e0e0;
+        --muted: #888;
+        --faint: #555;
+        --green: #2ecc71;
+        --green-bg: #0d2b1a;
+        --green-border: #27ae60;
+        --blue: #5bc8f5;
+        --blue-bg: #0d1e2b;
+        --blue-border: #1a6fa0;
+        --orange: #f39c12;
+        --orange-bg: #1a1409;
+        --orange-border: #5a3e00;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Mono', 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; line-height: 1; }
+    .logo span { color: var(--accent); }
+    .subtitle { font-size: 9px; color: var(--faint); letter-spacing: 2px; margin-top: 2px; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 32px 20px; }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .intro {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .section { margin-bottom: 36px; }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: 3px;
+      color: var(--faint);
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content { flex: 1; }
+    .step-title { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+    .step-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+    .step-desc code {
+      background: var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 12px 16px;
+      background: var(--border);
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--faint);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+    }
+
+    .platform-block {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .platform-header {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .platform-icon { font-size: 22px; }
+    .platform-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; }
+    .platform-sub { font-size: 10px; color: var(--faint); }
+
+    .platform-body { padding: 16px; background: var(--surface); }
+
+    .notice {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .notice.green { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+    .notice.blue  { background: var(--blue-bg);  border: 1px solid var(--blue-border);  color: var(--blue); }
+    .notice.orange{ background: var(--orange-bg);border: 1px solid var(--orange-border);color: var(--orange); }
+
+    .files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .file-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .file-name { font-size: 13px; color: var(--accent); margin-bottom: 3px; }
+    .file-desc { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+    .faq-item { margin-bottom: 20px; }
+    .faq-q { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 5px; }
+    .faq-a { font-size: 11px; color: var(--muted); line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span>AUTO</span>KEEPER</div>
+  <div class="subtitle">SETUP &amp; INSTALLATION GUIDE</div>
+</header>
+
+<div class="container">
+
+  <div style="margin-bottom:28px">
+    <h2>Getting Started</h2>
+    <p class="intro">
+      AutoKeeper is a self-contained web app — no app store, no account, no subscription.
+      Your data is stored directly on your device and never leaves it.
+      Below are instructions for every platform.
+    </p>
+  </div>
+
+  <!-- FILES -->
+  <div class="section">
+    <div class="section-title">FILES YOU RECEIVED</div>
+    <div class="files-grid">
+      <div class="file-card">
+        <div class="file-name">autokeeper.html</div>
+        <div class="file-desc">The entire app. Open this in any browser to run it.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">sw.js</div>
+        <div class="file-desc">Service worker. Enables offline use and home screen installation.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">manifest.json</div>
+        <div class="file-desc">PWA config. Tells your phone how to display the app icon and name.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">instructions.html</div>
+        <div class="file-desc">This file. You can delete it once you're set up.</div>
+      </div>
+    </div>
+    <div class="notice orange">
+      ⚠️ Keep all three app files (<code>autokeeper.html</code>, <code>sw.js</code>, <code>manifest.json</code>) in the <strong>same folder</strong>. They need to be together to work correctly.
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- OPTION A: LOCAL FILE -->
+  <div class="section">
+    <div class="section-title">OPTION A — USE IT AS A LOCAL FILE (SIMPLEST)</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7">
+      No internet or server needed after the first open. Just open the file directly in your browser.
+      Data saves automatically to that browser on that device.
+    </p>
+
+    <div class="platform-block">
+      <div class="platform-header">
+        <div class="platform-icon">🖥️</div>
+        <div>
+          <div class="platform-name">Windows / Mac / Linux</div>
+          <div class="platform-sub">Chrome, Edge, Firefox, Safari</div>
+        </div>
+      </div>
+      <div class="platform-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Download all 3 files into one folder</div>
+            <div class="step-desc">Keep <code>autokeeper.html</code>, <code>sw.js</code>, and <code>manifest.json</code> together.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Double-click <code>autokeeper.html</code></div>
+            <div class="step-desc">It opens in your default browser. That's it — the app is running.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Bookmark it for easy access</div>
+            <div class="step-desc">Press <code>Ctrl+D</code> (Windows) or <code>Cmd+D</code> (Mac) to bookmark. Your data persists automatically in the browser.</div>
+          </div>
+        </div>
+        <div class="notice green">✓ Data saves in your browser's localStorage automatically. As long as you open the same file in the same browser, everything is there.</div>
+      </div>
+    </div>
+
+    <div class="platform-block">
+      <div class="platform-header">
+        <div class="platform-icon">📱</div>
+        <div>
+          <div class="platform-name">iPhone / iPad</div>
+          <div class="platform-sub">Safari required for home screen install</div>
+        </div>
+      </div>
+      <div class="platform-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Transfer the 3 files to your iPhone</div>
+            <div class="step-desc">AirDrop the folder from your Mac, or use iCloud Drive / Files app. All 3 files must stay in the same folder.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Open the Files app → find <code>autokeeper.html</code></div>
+            <div class="step-desc">Tap it once — it will open in Safari.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Add to Home Screen</div>
+            <div class="step-desc">Tap the <strong>Share button</strong> (box with arrow pointing up) → scroll down → tap <strong>"Add to Home Screen"</strong> → tap <strong>Add</strong>.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Open from your home screen</div>
+            <div class="step-desc">The AutoKeeper icon now appears on your home screen. Tap it to open full-screen, like a native app. Always open it this way — not from Safari — to keep your data consistent.</div>
+          </div>
+        </div>
+        <div class="notice orange">⚠️ On iPhone, when opening a local file, data is stored per-session in that browser context. For reliable saving, use the hosted option below (Option B) which gives a permanent URL.</div>
+      </div>
+    </div>
+
+    <div class="platform-block">
+      <div class="platform-header">
+        <div class="platform-icon">🤖</div>
+        <div>
+          <div class="platform-name">Android</div>
+          <div class="platform-sub">Chrome recommended</div>
+        </div>
+      </div>
+      <div class="platform-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Transfer the 3 files to your Android device</div>
+            <div class="step-desc">Use a USB cable, Google Drive, or Bluetooth. Place all 3 files in the same folder (e.g. Downloads).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Open <code>autokeeper.html</code> in Chrome</div>
+            <div class="step-desc">Use your file manager app, tap the file, choose "Open with Chrome".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Install to home screen</div>
+            <div class="step-desc">Tap Chrome's <strong>⋮ menu</strong> → <strong>"Add to Home screen"</strong> → <strong>Add</strong>. The app icon appears on your home screen.</div>
+          </div>
+        </div>
+        <div class="notice green">✓ Android Chrome handles local PWA installs well. Data saves reliably in localStorage.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- OPTION B: HOSTED -->
+  <div class="section">
+    <div class="section-title">OPTION B — HOST IT ONLINE (RECOMMENDED FOR PHONES)</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7">
+      Hosting gives you a permanent URL you can open from any device, any browser, any time.
+      This is the most reliable way to use AutoKeeper on your phone — especially iPhone.
+      All options below are <strong>free</strong>.
+    </p>
+
+    <div class="platform-block">
+      <div class="platform-header">
+        <div class="platform-icon">▲</div>
+        <div>
+          <div class="platform-name">Netlify Drop (Easiest — 60 seconds)</div>
+          <div class="platform-sub">No account required</div>
+        </div>
+      </div>
+      <div class="platform-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Go to <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--accent)">app.netlify.com/drop</a> on your computer</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Drag your folder into the drop zone</div>
+            <div class="step-desc">Drag the entire folder containing all 3 files onto the page.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Get your URL</div>
+            <div class="step-desc">Netlify gives you a free URL like <code>https://fancy-name-123.netlify.app</code>. Open it on your phone, add to home screen.</div>
+          </div>
+        </div>
+        <div class="notice green">✓ Free forever. No login needed. URL works on any device.</div>
+      </div>
+    </div>
+
+    <div class="platform-block">
+      <div class="platform-header">
+        <div class="platform-icon">🐙</div>
+        <div>
+          <div class="platform-name">GitHub Pages (Free, Permanent)</div>
+          <div class="platform-sub">Requires a free GitHub account</div>
+        </div>
+      </div>
+      <div class="platform-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Create a free account at <a href="https://github.com" target="_blank" style="color:var(--accent)">github.com</a></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Create a new repository → upload all 3 files</div>
+            <div class="step-desc">Name the repo anything (e.g. <code>autokeeper</code>). Upload files via the web interface.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Enable GitHub Pages</div>
+            <div class="step-desc">Go to repo <strong>Settings → Pages → Source: main branch</strong>. Save. Your app is live at <code>https://yourusername.github.io/autokeeper/autokeeper.html</code></div>
+          </div>
+        </div>
+        <div class="notice blue">ℹ️ GitHub Pages is permanent and free. Great option if you want to update the app later.</div>
+      </div>
+    </div>
+
+    <!-- iPhone install from hosted -->
+    <div style="margin-top:20px">
+      <div class="section-title">INSTALL TO IPHONE HOME SCREEN FROM A HOSTED URL</div>
+      <div class="platform-body" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Open the URL in Safari</div>
+            <div class="step-desc">Must be Safari — Chrome on iPhone cannot install PWAs.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Tap the Share button</div>
+            <div class="step-desc">The box-with-arrow icon at the bottom of the screen.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Tap "Add to Home Screen" → Add</div>
+            <div class="step-desc">AutoKeeper appears on your home screen with an icon. Opens full-screen, no browser chrome.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Always open from the home screen icon</div>
+            <div class="step-desc">This keeps your data consistent. Each install context has its own localStorage.</div>
+          </div>
+        </div>
+        <div class="notice green">✓ After install, the app works fully offline. Your data never leaves your device.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- FAQ -->
+  <div class="section">
+    <div class="section-title">FAQ</div>
+
+    <div class="faq-item">
+      <div class="faq-q">Will my data sync between my phone and computer?</div>
+      <div class="faq-a">Not automatically — data lives in each browser's localStorage separately. To move data between devices, use the CSV export button in the app, then import it manually. True sync would require a backend server, which is a future enhancement.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What happens if I clear my browser data?</div>
+      <div class="faq-a">Clearing browser data or cache will erase your AutoKeeper data. Export a CSV backup regularly, especially before clearing browser storage.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Can I share this with someone else?</div>
+      <div class="faq-a">Yes — just share the URL if hosted, or send them the 3 files. Their data is completely separate from yours.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Does it work without internet?</div>
+      <div class="faq-a">Yes, after the first load. The service worker caches all app files so it works offline. If you're using a local file (not hosted), it always works offline.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Can I update the app without losing my data?</div>
+      <div class="faq-a">Yes. Data is stored in localStorage independently of the app files. Replacing the HTML/JS files doesn't touch your saved vehicles and logs.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

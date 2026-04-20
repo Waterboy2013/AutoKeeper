@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AutoKeeper" />
+  <meta name="theme-color" content="#0b0c10" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f0f2f7" media="(prefers-color-scheme: light)" />
+  <title>AutoKeeper</title>
+  <link rel="manifest" href="manifest.json" />
+  <!-- Apple touch icon (inline SVG as data URI so it works without a server) -->
+  <link rel="apple-touch-icon" href="data:image/png;base64,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" />
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; overscroll-behavior-y: none; }
+    /* Safe area insets for notched phones */
+    #root { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React + Babel (CDN — works offline after first load via service worker) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+
+
+const STORAGE_KEY = "vehicle-maintenance-app-v3";
+const APP_VERSION = "1.0.0";
+
+// ─── Maintenance items — ordered most → least frequent ───────────────────────
+const STATIC_ITEMS = [
+  { id:"oil-change",        name:"Oil Change",                        description:"Engine oil & filter replacement",                                      type:"mileage", intervalMiles:5000,  intervalLabel:"Every 5k miles",       icon:"🛢️" },
+  { id:"caliper-grease",    name:"Grease Calipers",                   description:"Apply silicone grease to brake calipers",                              type:"time",    intervalMonths:12,   intervalLabel:"Once a year",          icon:"🔧" },
+  { id:"undercoat",         name:"Lénine Undercoat",                  description:"Apply undercoating — avoid rubber components (~$150)",                 type:"time",    intervalMonths:12,   intervalLabel:"Once a year",          icon:"🛡️" },
+  { id:"undercarriage-wash",name:"Undercarriage Wash",                description:"Pre-winter + one warm mid-winter + post-winter. Skip below freezing.",type:"seasonal",                     intervalLabel:"Seasonal (3×/winter)", icon:"🚿" },
+  { id:"brake-fluid",       name:"Brake Fluid Change",                description:"Full brake fluid replacement",                                         type:"time",    intervalMonths:36,   intervalLabel:"Every 3 years",        icon:"🛑" },
+  { id:"trans-fluid",       name:"Transmission Fluid",                description:"3–4 qt drain and fill",                                               type:"mileage", intervalMiles:40000, intervalLabel:"Every 30–50k miles",   icon:"⚙️" },
+  { id:"coolant",           name:"Flush Coolant & Change Thermostat", description:"Full coolant flush + thermostat replacement",                          type:"mileage", intervalMiles:50000, intervalLabel:"Every 50k miles",      icon:"🌡️" },
+];
+
+const TIP = "💡 When something breaks, fix it within a week.";
+
+// Items that can be skipped if user lives in a mild/no-salt climate
+const SKIPPABLE_ITEMS = {
+  "undercoat":          { reason: "Most valuable in regions with road salt, snow, or coastal humidity. If you live somewhere mild and dry year-round, this is optional." },
+  "undercarriage-wash": { reason: "Primarily protects against road salt corrosion in winter. If your area doesn't use road salt or you rarely see snow/ice, this can be skipped." },
+};
+
+// ── Financial data for cost analysis ────────────────────────────────────────
+const COST_DATA = {
+  maintenance: [
+    { name:"Oil Change",               low:35,   high:120,  freqPerYear:2,   note:"2–4x/year depending on interval" },
+    { name:"Grease Calipers",          low:0,    high:30,   freqPerYear:1,   note:"Often DIY; shop: ~$30" },
+    { name:"Lénine Undercoat",         low:100,  high:200,  freqPerYear:1,   note:"~$150 typical" },
+    { name:"Undercarriage Wash",       low:10,   high:25,   freqPerYear:3,   note:"3x/winter season" },
+    { name:"Brake Fluid Change",       low:80,   high:150,  freqPerYear:0.33,note:"Every 3 years" },
+    { name:"Transmission Fluid",       low:100,  high:300,  freqPerYear:0.15,note:"Every 30–50k miles" },
+    { name:"Coolant Flush + Stat",     low:100,  high:250,  freqPerYear:0.1, note:"Every 50k miles" },
+    { name:"Tires (all-season, set)",  low:400,  high:900,  freqPerYear:0.2, note:"Every 5–7 years" },
+    { name:"Tires (winter, set)",      low:350,  high:700,  freqPerYear:0.2, note:"Every 5–7 years" },
+  ],
+  repairs: [
+    { name:"Engine replacement",       low:3000, high:10000, note:"Neglected oil = engine wear" },
+    { name:"Transmission rebuild",     low:1500, high:5000,  note:"Neglected fluid = failure" },
+    { name:"Brake caliper/rotor replacement", low:300, high:900, note:"Neglected grease = seized calipers" },
+    { name:"Rust repair (frame/body)", low:500,  high:5000,  note:"Skipped undercoat/wash on salted roads" },
+    { name:"Coolant system failure",   low:400,  high:2000,  note:"Overheating, head gasket risk" },
+  ],
+  newCarCost: { low: 28000, high: 48000, avgMonthly: 700, note: "Average new car price in the US (2024)" },
+};
+const MAKES = ["Acura","Alfa Romeo","Aston Martin","Audi","Bentley","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ferrari","FIAT","Ford","Genesis","GMC","Honda","Hyundai","INFINITI","Jaguar","Jeep","Kia","Lamborghini","Land Rover","Lexus","Lincoln","Maserati","Mazda","McLaren","Mercedes-Benz","MINI","Mitsubishi","Nissan","Porsche","RAM","Rivian","Rolls-Royce","Subaru","Tesla","Toyota","Volkswagen","Volvo","Other"];
+const DEFAULT_TIRE_MILES = { allseason:50000, winter:30000 };
+
+// ─── Tread depth thresholds (32nds of an inch) ───────────────────────────────
+// New tire ≈ 10/32"  |  Good: ≥7  |  Monitor: 5–6  |  Plan: 3–4  |  Replace: ≤2
+const TREAD = {
+  new:     { min:10, label:"New",          color:"#27ae60", bg_d:"#0a2615", bg_l:"#e8f8ee" },
+  good:    { min:7,  label:"Good",         color:"#2ecc71", bg_d:"#0d2b1a", bg_l:"#f0faf4" },
+  monitor: { min:5,  label:"Monitor Wear", color:"#f39c12", bg_d:"#2d2009", bg_l:"#fef8ec" },
+  plan:    { min:3,  label:"Plan Replacement", color:"#e67e22", bg_d:"#2d1a05", bg_l:"#fef3e2" },
+  replace: { min:0,  label:"REPLACE NOW",  color:"#e74c3c", bg_d:"#3d1414", bg_l:"#fef0f0" },
+};
+
+function getTreadLevel(depth32) {
+  const d = Number(depth32);
+  if (isNaN(d)) return null;
+  if (d >= TREAD.new.min)     return "new";
+  if (d >= TREAD.good.min)    return "good";
+  if (d >= TREAD.monitor.min) return "monitor";
+  if (d >= TREAD.plan.min)    return "plan";
+  return "replace";
+}
+
+// Natural wear estimate: ~1/32" per 8–10k miles (conservative)
+const WEAR_RATE_PER_MILE = 1 / 9000;
+
+function estimatedTread(baseTread, baseMiles, currentMiles) {
+  if (!baseTread || !baseMiles || !currentMiles) return null;
+  const driven = Number(currentMiles) - Number(baseMiles);
+  if (driven < 0) return Number(baseTread);
+  return Math.max(0, Number(baseTread) - driven * WEAR_RATE_PER_MILE);
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function genId() { return Math.random().toString(36).slice(2,10); }
+
+function milesStatus(lastMiles, currentMiles, intervalMiles) {
+  if (!lastMiles || !currentMiles || !intervalMiles) return "unknown";
+  const pct = (Number(currentMiles) - Number(lastMiles)) / Number(intervalMiles);
+  if (pct >= 1) return "overdue";
+  if (pct >= 0.8) return "due-soon";
+  return "ok";
+}
+
+function timeStatus(lastDate, intervalMonths) {
+  if (!lastDate) return "unknown";
+  const d = new Date(lastDate);
+  d.setMonth(d.getMonth() + intervalMonths);
+  const days = Math.round((d - new Date()) / 86400000);
+  if (days <= 0) return "overdue";
+  if (days <= 60) return "due-soon";
+  return "ok";
+}
+
+// ─── Theme ───────────────────────────────────────────────────────────────────
+function makeTheme(dark) {
+  return dark ? {
+    bg:"#0b0c10",surface:"#13141a",surface2:"#1a1b24",border:"#1e2030",border2:"#2a2d3e",
+    text:"#f0f0f0",textMuted:"#c0c0c0",textFaint:"#888",accent:"#c0392b",
+    overdueCardBg:"#3d1414",dueSoonCardBg:"#2d2009",okCardBg:"#0d2b1a",unknownCardBg:"#1a1a2e",
+    overdueText:"#ff6b6b",dueSoonText:"#f39c12",okText:"#2ecc71",unknownText:"#95a5a6",
+    overdueBorder:"#e74c3c",dueSoonBorder:"#e67e22",okBorder:"#27ae60",unknownBorder:"#7f8c8d",
+    tipBg:"#1a1409",tipBorder:"#5a3e00",tipText:"#f39c12",
+    tableRowBorder:"#1a1b24",historyDivider:"#1e2030",noRecordText:"#666",inputBg:"#1a1b24",
+    tireAllBorder:"#1a6fa0",tireAllText:"#5bc8f5",tireAllBg:"#0d1e2b",
+    tireWinBorder:"#4a5fc0",tireWinText:"#9aa8ff",tireWinBg:"#13162b",
+    bh:"1.15",
+  } : {
+    bg:"#f0f2f7",surface:"#ffffff",surface2:"#f8f9fc",border:"#e0e3ee",border2:"#d0d4e2",
+    text:"#1a1b24",textMuted:"#555",textFaint:"#999",accent:"#c0392b",
+    overdueCardBg:"#fef0f0",dueSoonCardBg:"#fef8ec",okCardBg:"#f0faf4",unknownCardBg:"#f4f5f9",
+    overdueText:"#c0392b",dueSoonText:"#b7770d",okText:"#1e8449",unknownText:"#7f8c8d",
+    overdueBorder:"#e74c3c",dueSoonBorder:"#e67e22",okBorder:"#27ae60",unknownBorder:"#c8cdd8",
+    tipBg:"#fffbf0",tipBorder:"#f0c040",tipText:"#b7770d",
+    tableRowBorder:"#f0f2f7",historyDivider:"#e0e3ee",noRecordText:"#ccc",inputBg:"#f8f9fc",
+    tireAllBorder:"#3498db",tireAllText:"#1a6fa0",tireAllBg:"#eaf6fe",
+    tireWinBorder:"#5c6bc0",tireWinText:"#3545a8",tireWinBg:"#eeeffe",
+    bh:"0.95",
+  };
+}
+
+// ─── Tread Depth Gauge ───────────────────────────────────────────────────────
+function TreadGauge({ depth, dark, T }) {
+  const MAX = 12;
+  const pct = Math.min(100, Math.max(0, (depth / MAX) * 100));
+  const level = getTreadLevel(depth);
+  const info = level ? TREAD[level] : null;
+  if (!info) return null;
+
+  const segments = [
+    { label:"2", pct: 2/MAX*100,  color:"#e74c3c" },
+    { label:"4", pct: 4/MAX*100,  color:"#e67e22" },
+    { label:"6", pct: 6/MAX*100,  color:"#f39c12" },
+    { label:"8", pct: 8/MAX*100,  color:"#2ecc71" },
+    { label:"12",pct:12/MAX*100,  color:"#27ae60" },
+  ];
+
+  return (
+    <div style={{ marginTop:6 }}>
+      {/* Segmented bar */}
+      <div style={{ position:"relative", height:8, borderRadius:4, overflow:"hidden", background: dark?"#1e2030":"#e0e3ee", marginBottom:4 }}>
+        {/* gradient fill */}
+        <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`,
+          background:`linear-gradient(to right, #e74c3c, #e67e22 33%, #f39c12 50%, #2ecc71 70%, #27ae60)`,
+          borderRadius:4, transition:"width 0.5s" }} />
+        {/* zone markers */}
+        {[2,4,6,8].map(v => (
+          <div key={v} style={{ position:"absolute", top:0, bottom:0, left:`${v/MAX*100}%`, width:1, background: dark?"rgba(255,255,255,0.15)":"rgba(0,0,0,0.12)" }} />
+        ))}
+      </div>
+      <div style={{ display:"flex", justifyContent:"space-between", fontSize:8, color:T.textFaint, marginBottom:5 }}>
+        <span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12/32"</span>
+      </div>
+      <div style={{ display:"inline-flex", alignItems:"center", gap:5, padding:"2px 8px", borderRadius:10,
+        background: dark ? info.bg_d : info.bg_l, border:`1px solid ${info.color}` }}>
+        <div style={{ width:7, height:7, borderRadius:"50%", background:info.color, flexShrink:0 }} />
+        <span style={{ fontSize:10, color:info.color, fontWeight:500 }}>{info.label}</span>
+        <span style={{ fontSize:10, color:T.textFaint }}>{depth.toFixed(1)}/32"</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tire Section ─────────────────────────────────────────────────────────────
+function TireSection({ vehicle, logs, setLogs, T, dark }) {
+  const defaultCfg = {
+    allseason:{ brand:"", size:"", intervalMiles:DEFAULT_TIRE_MILES.allseason, mountedAt:"", treadNew:"10", treadAt:"", treadMeasured:[] },
+    winter:   { brand:"", size:"", intervalMiles:DEFAULT_TIRE_MILES.winter,    mountedAt:"", treadNew:"10", treadAt:"", treadMeasured:[] },
+    active:"none"
+  };
+  const cfg = vehicle.tireConfig || defaultCfg;
+  const updateVehicle = TireSection._updateVehicle;
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showLogModal, setShowLogModal]   = useState(false);
+  const [showTreadModal, setShowTreadModal] = useState(false);
+  const [tireEdit, setTireEdit] = useState({});
+  const [logEntry, setLogEntry] = useState({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", notes:"", isMountSwap:false });
+  const [treadEntry, setTreadEntry] = useState({ date:new Date().toISOString().slice(0,10), fl:"", fr:"", rl:"", rr:"", notes:"" });
+
+  const lbl = { fontSize:10, color:T.textFaint, letterSpacing:1, display:"block", marginBottom:4 };
+
+  function openEdit(type) { setTireEdit({ ...cfg[type], type }); setShowEditModal(type); }
+  function saveEdit() {
+    const { type, ...rest } = tireEdit;
+    updateVehicle({ tireConfig:{ ...cfg, [type]:{ ...cfg[type], ...rest } } });
+    setShowEditModal(false);
+  }
+
+  function openLog(type) {
+    setShowLogModal(type);
+    setLogEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", notes:"", isMountSwap:false });
+  }
+
+  function openTread(type) {
+    setShowTreadModal(type);
+    setTreadEntry({ date:new Date().toISOString().slice(0,10), fl:"", fr:"", rl:"", rr:"", notes:"" });
+  }
+
+  function saveTread() {
+    const type = showTreadModal;
+    const entry = { ...treadEntry, miles:vehicle.odometer||"", ts:Date.now() };
+    // avg of entered values
+    const vals = [treadEntry.fl, treadEntry.fr, treadEntry.rl, treadEntry.rr].map(Number).filter(v => !isNaN(v) && v > 0);
+    const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+    const updatedMeasured = [...(cfg[type].treadMeasured||[]), entry];
+    updateVehicle({ tireConfig:{ ...cfg, [type]:{ ...cfg[type], treadMeasured:updatedMeasured, treadAt:vehicle.odometer, treadAvg:avg?.toFixed(1) } } });
+    setShowTreadModal(false);
+  }
+
+  function logTireService(type) {
+    const entry = { ...logEntry, ts:Date.now(), tireType:type };
+    setLogs(prev => ({
+      ...prev,
+      [vehicle.id]:{ ...(prev[vehicle.id]||{}), [`tire-${type}`]:[...((prev[vehicle.id]||{})[`tire-${type}`]||[]), entry] }
+    }));
+    if (logEntry.isMountSwap) {
+      updateVehicle({ tireConfig:{ ...cfg, [type]:{ ...cfg[type], mountedAt:logEntry.miles||vehicle.odometer }, active:type } });
+    }
+    setShowLogModal(false);
+    setLogEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", notes:"", isMountSwap:false });
+  }
+
+  function setActive(type) {
+    const newActive = cfg.active === type ? "none" : type;
+    updateVehicle({ tireConfig:{ ...cfg, active:newActive, [type]:{ ...cfg[type], mountedAt:vehicle.odometer||cfg[type].mountedAt } } });
+  }
+
+  function TireCard({ type, showActive=true }) {
+    const isAll = type === "allseason";
+    const tc = cfg[type];
+    const isActive = cfg.active === type;
+    const tireLogs = (logs[vehicle.id]||{})[`tire-${type}`] || [];
+    const lastLog = tireLogs[tireLogs.length-1];
+    const baseMiles = tc.mountedAt || lastLog?.miles;
+
+    // Mileage wear tracking
+    const milesDriven = baseMiles && vehicle.odometer ? Number(vehicle.odometer)-Number(baseMiles) : null;
+    const milesLeft = milesDriven !== null ? Number(tc.intervalMiles)-milesDriven : null;
+    const milePct = milesDriven !== null ? Math.min(100,Math.max(0,(milesDriven/Number(tc.intervalMiles))*100)) : 0;
+    const mileStatus = milesStatus(baseMiles, vehicle.odometer, tc.intervalMiles);
+
+    // Tread depth — prefer latest manual measurement, fall back to estimated
+    const hasMeasurement = tc.treadAvg && tc.treadAt;
+    const estimatedDepth = hasMeasurement
+      ? estimatedTread(tc.treadAvg, tc.treadAt, vehicle.odometer)
+      : (tc.treadNew && baseMiles ? estimatedTread(tc.treadNew, baseMiles, vehicle.odometer) : null);
+    const displayDepth = estimatedDepth;
+    const treadLevel = displayDepth !== null ? getTreadLevel(displayDepth) : null;
+    const treadInfo = treadLevel ? TREAD[treadLevel] : null;
+
+    // Overall severity = worst of mileage + tread
+    const isCritical = mileStatus==="overdue" || treadLevel==="replace";
+    const isWarning  = mileStatus==="due-soon" || treadLevel==="plan" || treadLevel==="monitor";
+
+    const accentBorder = isAll ? T.tireAllBorder : T.tireWinBorder;
+    const accentText   = isAll ? T.tireAllText   : T.tireWinText;
+    const cardBg       = isActive ? (isAll ? T.tireAllBg : T.tireWinBg)
+                       : isCritical ? (dark?"#3d1414":"#fef0f0")
+                       : isWarning  ? (dark?"#2d2009":"#fef8ec")
+                       : (dark?T.surface:T.surface);
+    const leftBorder   = isCritical ? T.overdueBorder : isWarning ? T.dueSoonBorder : isActive ? accentBorder : T.border;
+
+    return (
+      <div style={{ flex:"1 1 280px", minWidth:0 }}>
+        {/* Label */}
+        <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:7 }}>
+          <span style={{ fontSize:16 }}>{isAll ? "🌤️" : "❄️"}</span>
+          <span style={{ fontFamily:"'Bebas Neue'", fontSize:14, letterSpacing:2, color:accentText }}>
+            {isAll ? "ALL-SEASON" : "WINTER"} TIRES
+          </span>
+          {isActive && <span style={{ fontSize:9, padding:"2px 8px", borderRadius:10, background:accentBorder, color:"#fff", letterSpacing:1, marginLeft:"auto" }}>MOUNTED</span>}
+        </div>
+
+        <div className="card" style={{ padding:14, borderColor:leftBorder, borderLeft:`3px solid ${leftBorder}`, background:cardBg }}>
+          {/* Top row: info + buttons */}
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
+            <div>
+              {tc.brand
+                ? <div style={{ fontSize:12, color:T.text, fontWeight:500 }}>{tc.brand}</div>
+                : <div style={{ fontSize:11, color:T.noRecordText, fontStyle:"italic" }}>No info yet</div>}
+              {tc.size && <div style={{ fontSize:10, color:T.textFaint }}>{tc.size}</div>}
+              <div style={{ fontSize:9, color:T.textFaint, marginTop:2 }}>
+                Replace interval: {Number(tc.intervalMiles).toLocaleString()} mi
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:5, flexShrink:0, marginLeft:8 }}>
+              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Edit tire info" onClick={() => openEdit(type)}>✏️</button>
+              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Measure tread" onClick={() => openTread(type)}>📏</button>
+              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log service" onClick={() => openLog(type)}>+ LOG</button>
+            </div>
+          </div>
+
+          {/* Mileage progress */}
+          {milePct > 0 && (
+            <div style={{ marginBottom:6 }}>
+              <div style={{ fontSize:9, color:T.textFaint, marginBottom:3, letterSpacing:1 }}>MILEAGE WEAR</div>
+              <div style={{ height:5, borderRadius:3, background:dark?"#1e2030":"#e0e3ee", overflow:"hidden", marginBottom:4 }}>
+                <div style={{ height:"100%", borderRadius:3, width:`${milePct}%`,
+                  background:milePct>=100?"#e74c3c":milePct>=80?"#e67e22":"#27ae60", transition:"width 0.4s" }} />
+              </div>
+              {milesLeft !== null && (
+                <div style={{ fontSize:10, color:milesLeft<=0?T.overdueText:milesLeft<=5000?T.dueSoonText:T.okText }}>
+                  {milesLeft<=0 ? `${Math.abs(Math.round(milesLeft)).toLocaleString()} mi overdue` : `${Math.round(milesLeft).toLocaleString()} mi remaining`}
+                  {baseMiles && <span style={{ color:T.textFaint }}> · on since {Number(baseMiles).toLocaleString()} mi</span>}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tread depth */}
+          {displayDepth !== null && (
+            <div style={{ marginTop:8, paddingTop:8, borderTop:`1px solid ${T.border}` }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:2 }}>
+                <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1 }}>TREAD DEPTH</div>
+                {hasMeasurement
+                  ? <span style={{ fontSize:9, color:T.textFaint }}>measured @ {Number(tc.treadAt).toLocaleString()} mi · estimated now</span>
+                  : <span style={{ fontSize:9, color:T.textFaint }}>estimated from new</span>}
+              </div>
+              <TreadGauge depth={displayDepth} dark={dark} T={T} />
+              {/* Most recent manual measurement */}
+              {tc.treadMeasured?.length > 0 && (() => {
+                const last = tc.treadMeasured[tc.treadMeasured.length-1];
+                const positions = [["fl","FL"],["fr","FR"],["rl","RL"],["rr","RR"]].filter(([k]) => last[k]);
+                if (!positions.length) return null;
+                return (
+                  <div style={{ marginTop:8, display:"flex", gap:6, flexWrap:"wrap" }}>
+                    {positions.map(([k,label]) => {
+                      const d = Number(last[k]);
+                      const lv = getTreadLevel(d);
+                      const info = lv ? TREAD[lv] : null;
+                      return (
+                        <div key={k} style={{ textAlign:"center", padding:"4px 8px", borderRadius:6,
+                          background: dark?(info?.bg_d||T.surface2):(info?.bg_l||T.surface2),
+                          border:`1px solid ${info?.color||T.border}` }}>
+                          <div style={{ fontSize:9, color:T.textFaint }}>{label}</div>
+                          <div style={{ fontSize:12, color:info?.color||T.text, fontWeight:600 }}>{d}</div>
+                          <div style={{ fontSize:8, color:T.textFaint }}>/32"</div>
+                        </div>
+                      );
+                    })}
+                    <div style={{ fontSize:9, color:T.textFaint, alignSelf:"center", marginLeft:2 }}>
+                      as of {last.date}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Mount toggle — only shown when winter tires exist (so "active" makes sense) */}
+          {showActive && (
+            <div style={{ marginTop:10, paddingTop:8, borderTop:`1px solid ${T.border}`, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+              <span style={{ fontSize:10, color:T.textFaint }}>{isActive ? "Currently mounted" : "Not mounted"}</span>
+              <button className="btn" style={{ fontSize:10, padding:"4px 12px", background:isActive?accentBorder:T.border2, color:isActive?"#fff":T.textMuted }} onClick={() => setActive(type)}>
+                {isActive ? "✓ MOUNTED" : "SET ACTIVE"}
+              </button>
+            </div>
+          )}
+
+          {lastLog && (
+            <div style={{ marginTop:5, fontSize:9, color:T.textFaint }}>
+              Last service: {lastLog.date}{lastLog.miles ? ` @ ${Number(lastLog.miles).toLocaleString()} mi` : ""}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const hasWinter = vehicle.winterTires === true;
+
+  return (
+    <div style={{ marginBottom:24 }}>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+        <div style={{ fontFamily:"'Bebas Neue'", fontSize:16, letterSpacing:3, color:T.textMuted }}>TIRES</div>
+        {!hasWinter && (
+          <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 12px" }}
+            onClick={() => updateVehicle({ winterTires: true })}>
+            + ADD WINTER TIRES
+          </button>
+        )}
+        {hasWinter && (
+          <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 12px", color:T.overdueBorder }}
+            onClick={() => { if(confirm("Remove winter tire tracking?")) updateVehicle({ winterTires: false, tireConfig: { ...cfg, active: cfg.active==="winter"?"none":cfg.active } }); }}>
+            ✕ REMOVE WINTER TIRES
+          </button>
+        )}
+      </div>
+      <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
+        <TireCard type="allseason" showActive={hasWinter} />
+        {hasWinter && <TireCard type="winter" showActive={true} />}
+      </div>
+
+      {/* ── Edit tire info modal ── */}
+      {showEditModal && (
+        <div className="overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:16, color:T.text }}>
+              {showEditModal==="allseason" ? "🌤️ ALL-SEASON" : "❄️ WINTER"} TIRE INFO
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div><label style={lbl}>BRAND / MODEL</label>
+                <input placeholder="e.g. Michelin CrossClimate2" value={tireEdit.brand||""} onChange={e=>setTireEdit(p=>({...p,brand:e.target.value}))} /></div>
+              <div><label style={lbl}>TIRE SIZE</label>
+                <input placeholder="e.g. 225/65R17" value={tireEdit.size||""} onChange={e=>setTireEdit(p=>({...p,size:e.target.value}))} /></div>
+              <div><label style={lbl}>REPLACE INTERVAL (miles)</label>
+                <input type="number" placeholder={showEditModal==="allseason"?"50000":"30000"} value={tireEdit.intervalMiles||""} onChange={e=>setTireEdit(p=>({...p,intervalMiles:e.target.value}))} />
+                <div style={{ fontSize:9, color:T.textFaint, marginTop:3 }}>Typical: all-season 40–70k · winter 25–40k</div>
+              </div>
+              <div><label style={lbl}>TREAD DEPTH WHEN NEW (32nds)</label>
+                <input type="number" step="0.5" min="0" max="16" placeholder="10" value={tireEdit.treadNew||""} onChange={e=>setTireEdit(p=>({...p,treadNew:e.target.value}))} />
+                <div style={{ fontSize:9, color:T.textFaint, marginTop:3 }}>Most new tires are 10/32". Performance tires may be 8/32". Winter tires 10–12/32".</div>
+              </div>
+              <div><label style={lbl}>ODOMETER WHEN MOUNTED / INSTALLED</label>
+                <input type="number" placeholder={vehicle.odometer||"e.g. 45000"} value={tireEdit.mountedAt||""} onChange={e=>setTireEdit(p=>({...p,mountedAt:e.target.value}))} /></div>
+              <div style={{ display:"flex", gap:8, marginTop:4 }}>
+                <button className="btn btn-primary" style={{ flex:1 }} onClick={saveEdit}>SAVE</button>
+                <button className="btn btn-ghost" onClick={() => setShowEditModal(false)}>CANCEL</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Tread measurement modal ── */}
+      {showTreadModal && (
+        <div className="overlay" onClick={() => setShowTreadModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:6, color:T.text }}>
+              📏 MEASURE TREAD DEPTH
+            </div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:16 }}>
+              Enter measurements in 32nds of an inch. Use a tread depth gauge or the penny/quarter test.
+              <br/><span style={{ color:T.dueSoonText }}>Quarter test: top of Washington's head = 4/32" · replace at ≤2/32"</span>
+            </div>
+
+            {/* Tire diagram */}
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:14 }}>
+              {[["fl","Front Left 🔲"],["fr","Front Right 🔲"],["rl","Rear Left 🔲"],["rr","Rear Right 🔲"]].map(([k,label]) => {
+                const val = treadEntry[k];
+                const lv = val ? getTreadLevel(val) : null;
+                const info = lv ? TREAD[lv] : null;
+                return (
+                  <div key={k} style={{ padding:"10px 12px", borderRadius:8,
+                    background: info ? (dark?info.bg_d:info.bg_l) : T.surface2,
+                    border:`1px solid ${info?.color||T.border2}` }}>
+                    <label style={{ ...lbl, color:info?.color||T.textFaint }}>{label}</label>
+                    <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                      <input type="number" step="0.5" min="0" max="16" placeholder="—" value={treadEntry[k]}
+                        onChange={e => setTreadEntry(p=>({...p,[k]:e.target.value}))}
+                        style={{ fontSize:18, fontWeight:700, textAlign:"center", color:info?.color||T.text, padding:"6px 8px" }} />
+                      <span style={{ fontSize:11, color:T.textFaint }}>/32"</span>
+                    </div>
+                    {info && <div style={{ fontSize:9, color:info.color, marginTop:2 }}>{info.label}</div>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              <div><label style={lbl}>DATE MEASURED</label>
+                <input type="date" value={treadEntry.date} onChange={e=>setTreadEntry(p=>({...p,date:e.target.value}))} /></div>
+              <div><label style={lbl}>NOTES (optional)</label>
+                <textarea rows={2} placeholder="Shop, conditions..." value={treadEntry.notes} onChange={e=>setTreadEntry(p=>({...p,notes:e.target.value}))} style={{ resize:"vertical" }} /></div>
+              <div style={{ display:"flex", gap:8 }}>
+                <button className="btn btn-primary" style={{ flex:1 }} onClick={saveTread}>SAVE MEASUREMENTS</button>
+                <button className="btn btn-ghost" onClick={() => setShowTreadModal(false)}>CANCEL</button>
+              </div>
+            </div>
+
+            {/* Tread reference */}
+            <div style={{ marginTop:16, borderTop:`1px solid ${T.border}`, paddingTop:12 }}>
+              <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:8 }}>TREAD REFERENCE</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                {Object.entries(TREAD).map(([k,v]) => (
+                  <div key={k} style={{ display:"flex", alignItems:"center", gap:8, fontSize:10 }}>
+                    <div style={{ width:10, height:10, borderRadius:"50%", background:v.color, flexShrink:0 }} />
+                    <span style={{ color:T.textFaint, width:50 }}>≥{v.min}/32"</span>
+                    <span style={{ color:v.color }}>{v.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Past measurements */}
+            {cfg[showTreadModal]?.treadMeasured?.length > 0 && (
+              <div style={{ marginTop:14, borderTop:`1px solid ${T.border}`, paddingTop:12 }}>
+                <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:8 }}>PAST MEASUREMENTS</div>
+                {[...cfg[showTreadModal].treadMeasured].reverse().slice(0,5).map((m,i) => {
+                  const vals = [m.fl,m.fr,m.rl,m.rr].filter(Boolean).map(Number);
+                  const avg = vals.length ? (vals.reduce((a,b)=>a+b)/vals.length).toFixed(1) : "—";
+                  return (
+                    <div key={i} style={{ fontSize:11, color:T.textMuted, marginBottom:4, display:"flex", gap:10 }}>
+                      <span>{m.date}</span>
+                      <span style={{ color:T.textFaint }}>avg {avg}/32"</span>
+                      <span style={{ color:T.textFaint }}>FL:{m.fl||"—"} FR:{m.fr||"—"} RL:{m.rl||"—"} RR:{m.rr||"—"}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Log service modal ── */}
+      {showLogModal && (
+        <div className="overlay" onClick={() => setShowLogModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:16, color:T.text }}>
+              {showLogModal==="allseason" ? "🌤️ ALL-SEASON" : "❄️ WINTER"} TIRE SERVICE
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div><label style={lbl}>DATE</label>
+                <input type="date" value={logEntry.date} onChange={e=>setLogEntry(p=>({...p,date:e.target.value}))} /></div>
+              <div><label style={lbl}>ODOMETER (miles)</label>
+                <input type="number" placeholder={vehicle.odometer||"e.g. 52000"} value={logEntry.miles} onChange={e=>setLogEntry(p=>({...p,miles:e.target.value}))} /></div>
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:8,
+                background:T.surface2, border:`1px solid ${logEntry.isMountSwap?T.accent:T.border2}`, cursor:"pointer" }}
+                onClick={() => setLogEntry(p=>({...p,isMountSwap:!p.isMountSwap}))}>
+                <div style={{ width:18, height:18, borderRadius:4, border:`2px solid ${logEntry.isMountSwap?T.accent:T.border2}`,
+                  background:logEntry.isMountSwap?T.accent:"transparent", display:"flex", alignItems:"center", justifyContent:"center",
+                  fontSize:11, color:"#fff", flexShrink:0 }}>{logEntry.isMountSwap?"✓":""}</div>
+                <div>
+                  <div style={{ fontSize:12, color:T.text }}>Tire swap / mount</div>
+                  <div style={{ fontSize:10, color:T.textFaint }}>Updates mounted-since odometer & sets as active</div>
+                </div>
+              </div>
+              <div><label style={lbl}>NOTES (optional)</label>
+                <textarea rows={2} placeholder="Rotation, balancing, shop..." value={logEntry.notes} onChange={e=>setLogEntry(p=>({...p,notes:e.target.value}))} style={{ resize:"vertical" }} /></div>
+              <div style={{ display:"flex", gap:8 }}>
+                <button className="btn btn-primary" style={{ flex:1 }} onClick={() => logTireService(showLogModal)}>✓ LOG SERVICE</button>
+                <button className="btn btn-ghost" onClick={() => setShowLogModal(false)}>CANCEL</button>
+              </div>
+            </div>
+            {((logs[vehicle.id]||{})[`tire-${showLogModal}`]||[]).length > 0 && (
+              <div style={{ marginTop:16, borderTop:`1px solid ${T.border}`, paddingTop:12 }}>
+                <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:8 }}>HISTORY</div>
+                {[...((logs[vehicle.id]||{})[`tire-${showLogModal}`]||[])].reverse().map((l,i) => (
+                  <div key={i} style={{ fontSize:11, color:T.textMuted, marginBottom:4, paddingBottom:4, borderBottom:`1px solid ${T.historyDivider}` }}>
+                    {l.date}{l.miles?` · ${Number(l.miles).toLocaleString()} mi`:""}{l.isMountSwap?" · 🔄 swap":""}{l.notes?` · ${l.notes}`:""}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main App ─────────────────────────────────────────────────────────────────
+function App() {
+  const [vehicles, setVehicles]         = useState([]);
+  const [logs, setLogs]                 = useState({});
+  const [activeVehicle, setActiveVehicle] = useState(null);
+  const [showAddVehicle, setShowAddVehicle] = useState(false);
+  const [showLogModal, setShowLogModal] = useState(null);
+  const [newVehicle, setNewVehicle]     = useState({ nickname:"",make:"",model:"",year:"",vin:"",odometer:"" });
+  const [logEntry, setLogEntry]         = useState({ date:new Date().toISOString().slice(0,10), miles:"", notes:"" });
+  const [showTip, setShowTip]           = useState(true);
+  const [notifPerm, setNotifPerm]       = useState(() => typeof Notification !== "undefined" ? Notification.permission : "unsupported");
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const [showCostPanel, setShowCostPanel]   = useState(false);
+  const [showCarfaxModal, setShowCarfaxModal] = useState(false);
+  const [carfaxParsing, setCarfaxParsing]   = useState(false);
+  const [carfaxResult, setCarfaxResult]     = useState(null);
+  const [dark, setDark]                 = useState(() => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const h = e => setDark(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        setVehicles(d.vehicles||[]);
+        setLogs(d.logs||{});
+        if (d.vehicles?.length) setActiveVehicle(d.vehicles[0].id);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ vehicles, logs }));
+  }, [vehicles, logs]);
+
+  // ── Notification helpers ──────────────────────────────────────────────────
+  async function requestNotifPermission() {
+    if (typeof Notification === "undefined") return;
+    const result = await Notification.requestPermission();
+    setNotifPerm(result);
+    return result;
+  }
+
+  function sendNotif(title, body, tag) {
+    if (Notification.permission !== "granted") return;
+    try {
+      new Notification(title, { body, tag, icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b0c10'/%3E%3Ctext y='.9em' font-size='80' x='10'%3E%F0%9F%9B%A2%3C/text%3E%3C/svg%3E" });
+    } catch(e) {}
+  }
+
+  function checkAndNotify() {
+    if (!vehicles.length || Notification.permission !== "granted") return;
+    vehicles.forEach(v => {
+      const vLogs = logs[v.id] || {};
+      STATIC_ITEMS.forEach(item => {
+        const itemLogs = vLogs[item.id] || [];
+        const last = itemLogs[itemLogs.length - 1];
+        let status = "ok";
+        const eff = item.id === "oil-change" ? Number(v.oilInterval || item.intervalMiles) : item.intervalMiles;
+        if (item.type === "mileage") status = milesStatus(last?.miles, v.odometer, eff);
+        if (item.type === "time")    status = timeStatus(last?.date, item.intervalMonths);
+        const label = v.nickname || `${v.year} ${v.make} ${v.model}`;
+        const tag = `ak-${v.id}-${item.id}`;
+        if (status === "overdue") {
+          sendNotif(`${item.icon} ${item.name} OVERDUE`, `${label} — this service is past due.`, tag);
+        } else if (status === "due-soon") {
+          sendNotif(`${item.icon} ${item.name} due soon`, `${label} — coming up soon.`, tag);
+        }
+      });
+    });
+  }
+
+  // Check on app open
+  useEffect(() => {
+    if (vehicles.length) checkAndNotify();
+  }, [vehicles.length]);
+
+  const T = makeTheme(dark);
+  const vehicle = vehicles.find(v => v.id === activeVehicle);
+
+  TireSection._updateVehicle = (patch) => {
+    setVehicles(prev => prev.map(v => v.id === activeVehicle ? { ...v, ...patch } : v));
+  };
+
+  const STATUS = {
+    overdue:    { label:"OVERDUE",  bg:T.overdueCardBg, border:T.overdueBorder, text:T.overdueText },
+    "due-soon": { label:"DUE SOON", bg:T.dueSoonCardBg, border:T.dueSoonBorder, text:T.dueSoonText },
+    ok:         { label:"OK",       bg:T.okCardBg,      border:T.okBorder,      text:T.okText },
+    unknown:    { label:"LOG IT",   bg:T.unknownCardBg, border:T.unknownBorder, text:T.unknownText },
+  };
+
+  const lbl = { fontSize:10, color:T.textFaint, letterSpacing:1, display:"block", marginBottom:4 };
+
+  function addVehicle() {
+    if (!newVehicle.make||!newVehicle.model||!newVehicle.year) return;
+    const id = genId();
+    const tireConfig = {
+      allseason:{ brand:"",size:"",intervalMiles:DEFAULT_TIRE_MILES.allseason,mountedAt:"",treadNew:"10",treadAt:"",treadMeasured:[] },
+      winter:   { brand:"",size:"",intervalMiles:DEFAULT_TIRE_MILES.winter,   mountedAt:"",treadNew:"10",treadAt:"",treadMeasured:[] },
+      active:"none"
+    };
+    setVehicles(prev => [...prev, { ...newVehicle, id, tireConfig, oilInterval: 5000, winterTires: false, skipped: {} }]);
+    setActiveVehicle(id);
+    setShowAddVehicle(false);
+    setNewVehicle({ nickname:"",make:"",model:"",year:"",vin:"",odometer:"" });
+  }
+
+  function deleteVehicle(id) {
+    setVehicles(prev => prev.filter(v => v.id!==id));
+    setLogs(prev => { const n={...prev}; delete n[id]; return n; });
+    setActiveVehicle(vehicles.filter(v => v.id!==id)[0]?.id||null);
+  }
+
+  function getVehicleLogs(vid) { return logs[vid]||{}; }
+
+  function logMaintenance() {
+    if (!showLogModal||!vehicle) return;
+    setLogs(prev => ({
+      ...prev,
+      [vehicle.id]:{ ...(prev[vehicle.id]||{}), [showLogModal]:[...((prev[vehicle.id]||{})[showLogModal]||[]), { ...logEntry, ts:Date.now() }] }
+    }));
+    setShowLogModal(null);
+    setLogEntry({ date:new Date().toISOString().slice(0,10), miles:"", notes:"" });
+  }
+
+  function effectiveInterval(item) {
+    if (item.id === "oil-change") return Number(vehicle?.oilInterval || item.intervalMiles);
+    return item.intervalMiles;
+  }
+
+  function getItemStatus(item) {
+    if (!vehicle) return "unknown";
+    const vLogs = getVehicleLogs(vehicle.id)[item.id]||[];
+    const last = vLogs[vLogs.length-1];
+    if (item.type==="mileage") return milesStatus(last?.miles, vehicle.odometer, effectiveInterval(item));
+    if (item.type==="time")    return timeStatus(last?.date, item.intervalMonths);
+    return last ? "ok" : "unknown";
+  }
+
+  function getMilesTill(item) {
+    if (!vehicle||item.type!=="mileage") return null;
+    const last = (getVehicleLogs(vehicle.id)[item.id]||[]).slice(-1)[0];
+    if (!last?.miles||!vehicle.odometer) return null;
+    return effectiveInterval(item)-(Number(vehicle.odometer)-Number(last.miles));
+  }
+
+  function getTimeTill(item) {
+    if (!vehicle||item.type!=="time") return null;
+    const last = (getVehicleLogs(vehicle.id)[item.id]||[]).slice(-1)[0];
+    if (!last?.date) return null;
+    const d = new Date(last.date);
+    d.setMonth(d.getMonth()+item.intervalMonths);
+    return Math.round((d-new Date())/86400000);
+  }
+
+  const overdueCount = vehicle ? STATIC_ITEMS.filter(i=>getItemStatus(i)==="overdue" && !vehicle.skipped?.[i.id]).length : 0;
+  const dueSoonCount = vehicle ? STATIC_ITEMS.filter(i=>getItemStatus(i)==="due-soon" && !vehicle.skipped?.[i.id]).length : 0;
+
+  function allHistoryRows() {
+    if (!vehicle) return [];
+    const staticRows = STATIC_ITEMS.flatMap(item =>
+      (getVehicleLogs(vehicle.id)[item.id]||[]).map((log,i) => ({ ...log, itemName:item.name, icon:item.icon, key:`${item.id}-${i}`, ts:log.ts||0 }))
+    );
+    const tireRows = ["allseason","winter"].flatMap(type =>
+      ((logs[vehicle.id]||{})[`tire-${type}`]||[]).map((log,i) => ({
+        ...log, icon:type==="allseason"?"🌤️":"❄️",
+        itemName:`${type==="allseason"?"All-Season":"Winter"} Tires${log.isMountSwap?" (swap)":""}`,
+        key:`tire-${type}-${i}`, ts:log.ts||0
+      }))
+    );
+    return [...staticRows,...tireRows].sort((a,b)=>b.ts-a.ts);
+  }
+
+  async function exportCSV() {
+    if (!vehicle) return;
+    const rows = allHistoryRows();
+    const vehicleLabel = vehicle.nickname || `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+    const filename = `autokeeper-${vehicleLabel.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.csv`;
+    const header = ["Date","Service","Odometer (mi)","Notes"];
+    const lines = [
+      `# AutoKeeper Export — ${vehicleLabel}`,
+      `# VIN: ${vehicle.vin || "N/A"}`,
+      `# Exported: ${new Date().toLocaleDateString()}`,
+      "",
+      header.join(","),
+      ...rows.map(r => [
+        r.date || "",
+        `"${(r.itemName || "").replace(/"/g, '""')}"`,
+        r.miles ? Number(r.miles) : "",
+        `"${(r.notes || "").replace(/"/g, '""')}"`,
+      ].join(","))
+    ];
+    const csv = lines.join("\n");
+
+    // Desktop: use File System Access API for save-as dialog (Chrome/Edge on desktop)
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{ description: "CSV File", accept: { "text/csv": [".csv"] } }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(csv);
+        await writable.close();
+        return;
+      } catch (e) {
+        if (e.name === "AbortError") return; // user cancelled
+        // fall through to fallback
+      }
+    }
+
+    // Mobile & other browsers: standard download (triggers native save sheet on iOS/Android)
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap');
+    *{box-sizing:border-box} body{margin:0}
+    ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:${T.bg}} ::-webkit-scrollbar-thumb{background:${T.border2};border-radius:2px}
+    .card{background:${T.surface};border:1px solid ${T.border};border-radius:10px}
+    .btn{cursor:pointer;border:none;border-radius:6px;font-family:inherit;font-size:13px;padding:8px 16px;transition:all 0.15s}
+    .btn:hover{filter:brightness(${T.bh});transform:translateY(-1px)}
+    .btn-primary{background:${T.accent};color:#fff}
+    .btn-ghost{background:transparent;border:1px solid ${T.border2};color:${T.textMuted}}
+    .btn-ghost:hover{border-color:${dark?"#666":"#aaa"};color:${T.text}}
+    input,select,textarea{background:${T.inputBg};border:1px solid ${T.border2};border-radius:6px;color:${T.text};font-family:inherit;font-size:13px;padding:8px 12px;width:100%;outline:none}
+    input:focus,select:focus,textarea:focus{border-color:${T.accent}}
+    select option{background:${T.surface};color:${T.text}}
+    input[type="date"]::-webkit-calendar-picker-indicator{filter:${dark?"invert(1)":"none"}}
+    .tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500;letter-spacing:1px}
+    .vtab{cursor:pointer;padding:8px 16px;border-radius:8px;font-size:12px;transition:all 0.15s;white-space:nowrap;border:1px solid transparent;color:${T.textFaint};font-family:'DM Mono',monospace}
+    .vtab.active{background:${T.surface};border-color:${T.accent};color:${T.text}}
+    .vtab:hover:not(.active){color:${T.textMuted}}
+    .mitem{transition:all 0.2s;cursor:pointer}
+    .mitem:hover{transform:translateY(-2px);box-shadow:0 4px 16px ${dark?"rgba(0,0,0,0.4)":"rgba(0,0,0,0.08)"}}
+    .overlay{position:fixed;inset:0;background:${dark?"rgba(0,0,0,0.72)":"rgba(0,0,0,0.32)"};display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(6px);padding:16px}
+    .modal{background:${T.surface};border:1px solid ${T.border2};border-radius:14px;padding:24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto}
+    .sec-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:3px;color:${T.textMuted};margin-bottom:12px}
+  `;
+
+  return (
+    <div style={{ minHeight:"100vh", background:T.bg, color:T.text, fontFamily:"'DM Mono','Courier New',monospace" }}>
+      <style>{css}</style>
+
+      {/* Header */}
+      <div style={{ borderBottom:`1px solid ${T.border}`, padding:"16px 20px", display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, background:T.surface, position:"sticky", top:0, zIndex:10 }}>
+        <div>
+          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize:26, letterSpacing:3, color:T.text, lineHeight:1 }}>
+            <span style={{ color:T.accent }}>AUTO</span>KEEPER
+          </div>
+          <div style={{ fontSize:9, color:T.textFaint, letterSpacing:2, marginTop:2 }}>VEHICLE MAINTENANCE TRACKER</div>
+          <div style={{ fontSize:8, color:T.textFaint, letterSpacing:1, marginTop:1, opacity:0.6 }}>v{APP_VERSION}</div>
+        </div>
+        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+          <button className="btn btn-ghost" style={{ fontSize:16, padding:"6px 10px", position:"relative" }}
+            onClick={() => setShowNotifPanel(true)} title="Notification settings">
+            🔔
+            {notifPerm === "granted" && <span style={{ position:"absolute", top:4, right:4, width:6, height:6, borderRadius:"50%", background:"#27ae60" }} />}
+          </button>
+          <button className="btn btn-ghost" style={{ fontSize:11, padding:"6px 10px" }}
+            onClick={() => setShowCostPanel(true)} title="Financial analysis">💰</button>
+          <button className="btn btn-primary" onClick={() => setShowAddVehicle(true)} style={{ fontSize:11, letterSpacing:1 }}>+ ADD VEHICLE</button>
+        </div>
+      </div>
+
+      {/* Tip */}
+      {showTip && (
+        <div style={{ margin:"14px 20px 0", background:T.tipBg, border:`1px solid ${T.tipBorder}`, borderRadius:8, padding:"9px 14px", display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:11, color:T.tipText }}>
+          <span>{TIP}</span>
+          <button onClick={() => setShowTip(false)} style={{ background:"none", border:"none", color:T.tipText, cursor:"pointer", fontSize:18, padding:0, marginLeft:10, lineHeight:1 }}>×</button>
+        </div>
+      )}
+
+      {/* Vehicle Tabs */}
+      {vehicles.length > 0 && (
+        <div style={{ padding:"14px 20px 0", display:"flex", gap:8, overflowX:"auto" }}>
+          {vehicles.map(v => (
+            <div key={v.id} className={`vtab ${activeVehicle===v.id?"active":""}`} onClick={() => setActiveVehicle(v.id)}>
+              {v.nickname||`${v.year} ${v.make} ${v.model}`}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ padding:"16px 20px 40px" }}>
+        {!vehicle ? (
+          <div style={{ textAlign:"center", padding:"72px 20px", color:T.textFaint }}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:22, letterSpacing:3, marginTop:14, color:T.textMuted }}>NO VEHICLES YET</div>
+            <div style={{ fontSize:12, marginTop:6 }}>Add your first vehicle to start tracking maintenance</div>
+            <button className="btn btn-primary" style={{ marginTop:18 }} onClick={() => setShowAddVehicle(true)}>+ ADD YOUR FIRST VEHICLE</button>
+          </div>
+        ) : (
+          <>
+            {/* Vehicle info bar */}
+            <div className="card" style={{ padding:"14px 18px", marginBottom:20, display:"flex", flexWrap:"wrap", gap:14, alignItems:"center", justifyContent:"space-between" }}>
+              <div>
+                <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:2, color:T.text }}>
+                  {vehicle.nickname||`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                </div>
+                <div style={{ fontSize:10, color:T.textFaint, display:"flex", gap:10, marginTop:2, flexWrap:"wrap" }}>
+                  {vehicle.year&&<span>{vehicle.year}</span>}
+                  {vehicle.make&&<span>{vehicle.make}</span>}
+                  {vehicle.model&&<span>{vehicle.model}</span>}
+                  {vehicle.vin&&<span style={{ color:T.accent }}>VIN: {vehicle.vin}</span>}
+                </div>
+              </div>
+              <div style={{ display:"flex", gap:12, alignItems:"center", flexWrap:"wrap" }}>
+                <div style={{ textAlign:"center" }}>
+                  <div style={{ fontFamily:"'Bebas Neue'", fontSize:22, color:T.text }}>{vehicle.odometer?Number(vehicle.odometer).toLocaleString():"—"}</div>
+                  <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1 }}>MILES</div>
+                </div>
+                {overdueCount>0&&<span className="tag" style={{ background:T.overdueCardBg,color:T.overdueText,border:`1px solid ${T.overdueBorder}` }}>{overdueCount} OVERDUE</span>}
+                {dueSoonCount>0&&<span className="tag" style={{ background:T.dueSoonCardBg,color:T.dueSoonText,border:`1px solid ${T.dueSoonBorder}` }}>{dueSoonCount} DUE SOON</span>}
+                <div style={{ display:"flex", gap:6 }}>
+                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 11px" }} onClick={() => {
+                    const odo = prompt("Enter corrected odometer reading (miles):", vehicle.odometer||"");
+                    if (odo!==null&&!isNaN(odo)&&odo.trim()!=="")
+                      setVehicles(prev => prev.map(v => v.id===vehicle.id?{...v,odometer:odo.trim()}:v));
+                  }}>✏️ ODO</button>
+                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 9px" }}
+                    onClick={() => setShowCarfaxModal(true)} title="Import Carfax PDF">📄 CARFAX</button>
+                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 9px", color:"#e74c3c" }} onClick={() => {
+                    if (confirm(`Delete ${vehicle.nickname||vehicle.model}?`)) deleteVehicle(vehicle.id);
+                  }}>🗑</button>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Tires ── */}
+            <TireSection vehicle={vehicle} logs={logs} setLogs={setLogs} T={T} dark={dark} />
+
+            {/* ── Maintenance ── */}
+            <div className="sec-title">MAINTENANCE</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(285px,1fr))", gap:12, marginBottom:28 }}>
+              {STATIC_ITEMS.map(item => {
+                const status = getItemStatus(item);
+                const sc = STATUS[status];
+                const vLogs = getVehicleLogs(vehicle.id)[item.id]||[];
+                const lastLog = vLogs[vLogs.length-1];
+                const milesTill = getMilesTill(item);
+                const daysTill = getTimeTill(item);
+                let pct = 0;
+                if (item.type==="mileage"&&milesTill!==null) {
+                  const eff = item.id==="oil-change" ? Number(vehicle.oilInterval||item.intervalMiles) : item.intervalMiles;
+                  pct=Math.min(100,Math.max(0,((eff-milesTill)/eff)*100));
+                }
+                if (item.type==="time"&&daysTill!==null)
+                  pct=Math.min(100,Math.max(0,((item.intervalMonths*30-daysTill)/(item.intervalMonths*30))*100));
+                return (
+                  <div key={item.id} className="card mitem"
+                    style={{ padding:16, borderColor:sc.border, borderLeft:`3px solid ${sc.border}`, background:sc.bg }}
+                    onClick={() => { setShowLogModal(item.id); setLogEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", notes:"" }); }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                      <div style={{ display:"flex", gap:9, alignItems:"flex-start" }}>
+                        <span style={{ fontSize:20 }}>{item.icon}</span>
+                        <div>
+                          <div style={{ fontSize:12, fontWeight:500, color:T.text, marginBottom:2 }}>{item.name}</div>
+                          <div style={{ fontSize:10, color:T.textFaint }}>{item.description}</div>
+                        </div>
+                      </div>
+                      <span className="tag" style={{ background:"transparent", color:sc.text, border:`1px solid ${sc.border}`, marginLeft:6, flexShrink:0, fontSize:9 }}>{sc.label}</span>
+                    </div>
+                    <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:7 }}>
+                      {item.id==="oil-change"
+                        ? `Every ${Number(vehicle.oilInterval||5000).toLocaleString()} miles`
+                        : item.intervalLabel}
+                    </div>
+                    {item.id==="oil-change"&&(
+                      <div style={{ display:"flex", gap:5, marginBottom:8 }} onClick={e=>e.stopPropagation()}>
+                        {[3000,5000,"custom"].map(opt => {
+                          const isCustom = opt==="custom";
+                          const curInterval = Number(vehicle.oilInterval||5000);
+                          const isActive = isCustom ? (curInterval!==3000&&curInterval!==5000) : curInterval===opt;
+                          return (
+                            <button key={opt} className="btn" style={{
+                              fontSize:10, padding:"3px 10px", borderRadius:20,
+                              background: isActive ? T.accent : "transparent",
+                              color: isActive ? "#fff" : T.textMuted,
+                              border:`1px solid ${isActive ? T.accent : T.border2}`,
+                            }} onClick={() => {
+                              if (isCustom) {
+                                const val = prompt("Enter custom oil change interval (miles):", curInterval);
+                                if (val!==null && !isNaN(val) && Number(val)>0)
+                                  setVehicles(prev => prev.map(v => v.id===vehicle.id?{...v,oilInterval:Number(val)}:v));
+                              } else {
+                                setVehicles(prev => prev.map(v => v.id===vehicle.id?{...v,oilInterval:opt}:v));
+                              }
+                            }}>
+                              {isCustom ? (isActive ? `${curInterval.toLocaleString()} mi ✏️` : "custom") : `${opt.toLocaleString()}`}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {pct>0&&(
+                      <div style={{ height:4, borderRadius:2, background:T.border, overflow:"hidden", marginBottom:6 }}>
+                        <div style={{ height:"100%", borderRadius:2, width:`${pct}%`, background:pct>=100?"#e74c3c":pct>=80?"#e67e22":"#27ae60", transition:"width 0.4s" }} />
+                      </div>
+                    )}
+                    {milesTill!==null&&(
+                      <div style={{ fontSize:10, color:milesTill<=0?T.overdueText:milesTill<=5000?T.dueSoonText:T.okText }}>
+                        {milesTill<=0?`${Math.abs(milesTill).toLocaleString()} mi overdue`:`${milesTill.toLocaleString()} mi remaining`}
+                      </div>
+                    )}
+                    {daysTill!==null&&(
+                      <div style={{ fontSize:10, color:daysTill<=0?T.overdueText:daysTill<=60?T.dueSoonText:T.okText }}>
+                        {daysTill<=0?`${Math.abs(daysTill)} days overdue`:`${daysTill} days remaining`}
+                      </div>
+                    )}
+                    {lastLog&&(
+                      <div style={{ marginTop:7, paddingTop:7, borderTop:`1px solid ${T.border}`, fontSize:9, color:T.textFaint }}>
+                        Last: {lastLog.date}{lastLog.miles?` @ ${Number(lastLog.miles).toLocaleString()} mi`:""}{lastLog.notes?` — ${lastLog.notes}`:""}
+                      </div>
+                    )}
+                    {/* Skip toggle for winter-specific items */}
+                    {SKIPPABLE_ITEMS[item.id] && (
+                      <div style={{ marginTop:8, paddingTop:7, borderTop:`1px solid ${T.border}` }} onClick={e=>e.stopPropagation()}>
+                        {vehicle.skipped?.[item.id] ? (
+                          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                            <span style={{ fontSize:9, color:T.textFaint, fontStyle:"italic" }}>Skipped — not applicable for your climate</span>
+                            <button className="btn btn-ghost" style={{ fontSize:9, padding:"2px 8px" }}
+                              onClick={() => setVehicles(prev => prev.map(v => v.id===vehicle.id ? {...v, skipped:{...(v.skipped||{}), [item.id]:false}} : v))}>
+                              UNDO
+                            </button>
+                          </div>
+                        ) : (
+                          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:8 }}>
+                            <span style={{ fontSize:9, color:T.textFaint, flex:1, lineHeight:1.5 }}>{SKIPPABLE_ITEMS[item.id].reason}</span>
+                            <button className="btn btn-ghost" style={{ fontSize:9, padding:"2px 8px", flexShrink:0 }}
+                              onClick={() => setVehicles(prev => prev.map(v => v.id===vehicle.id ? {...v, skipped:{...(v.skipped||{}), [item.id]:true}} : v))}>
+                              SKIP
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {vLogs.length===0&&!vehicle.skipped?.[item.id]&&<div style={{ fontSize:10, color:T.noRecordText, marginTop:3 }}>No records yet — tap to log</div>}
+                    {vehicle.skipped?.[item.id]&&<div style={{ fontSize:10, color:T.textFaint, marginTop:3, fontStyle:"italic" }}>Not tracked for your location</div>}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ── History ── */}
+            {allHistoryRows().length>0&&(
+              <div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                  <div className="sec-title" style={{ marginBottom:0 }}>MAINTENANCE HISTORY</div>
+                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"5px 12px", display:"flex", alignItems:"center", gap:5 }} onClick={exportCSV}>
+                    ⬇ CSV
+                  </button>
+                </div>
+                <div className="card" style={{ overflowX:"auto" }}>
+                  <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+                    <thead>
+                      <tr style={{ borderBottom:`1px solid ${T.border}` }}>
+                        {["DATE","SERVICE","MILES","NOTES"].map(h=>(
+                          <th key={h} style={{ padding:"9px 14px", textAlign:"left", color:T.textFaint, fontWeight:400, letterSpacing:1, fontSize:9 }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allHistoryRows().map(row=>(
+                        <tr key={row.key} style={{ borderBottom:`1px solid ${T.tableRowBorder}` }}>
+                          <td style={{ padding:"9px 14px", color:T.textMuted }}>{row.date}</td>
+                          <td style={{ padding:"9px 14px", color:T.text }}>{row.icon} {row.itemName}</td>
+                          <td style={{ padding:"9px 14px", color:T.textMuted }}>{row.miles?Number(row.miles).toLocaleString():"—"}</td>
+                          <td style={{ padding:"9px 14px", color:T.textFaint }}>{row.notes||"—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Notification Panel Modal */}
+      {showNotifPanel && (
+        <div className="overlay" onClick={() => setShowNotifPanel(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:22, letterSpacing:3, marginBottom:6, color:T.text }}>🔔 NOTIFICATIONS</div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:20, lineHeight:1.7 }}>
+              AutoKeeper can send you reminders when maintenance is overdue or coming up soon.
+              Notifications are checked each time you open the app.
+            </div>
+
+            {/* Permission status */}
+            {notifPerm === "unsupported" && (
+              <div style={{ padding:"12px 14px", borderRadius:8, background:T.surface2, border:`1px solid ${T.border2}`, fontSize:11, color:T.textFaint, marginBottom:16 }}>
+                ⚠️ Notifications are not supported in this browser. Try opening the app from your home screen after installing it as a PWA.
+              </div>
+            )}
+
+            {notifPerm === "denied" && (
+              <div style={{ padding:"12px 14px", borderRadius:8, background:T.overdueCardBg, border:`1px solid ${T.overdueBorder}`, fontSize:11, color:T.overdueText, marginBottom:16 }}>
+                🚫 Notifications are blocked. To enable them, go to your browser or phone Settings → find AutoKeeper → allow notifications, then come back here.
+              </div>
+            )}
+
+            {notifPerm === "default" && (
+              <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:16 }}>
+                <div style={{ fontSize:12, color:T.text }}>Notifications are not yet enabled.</div>
+                <button className="btn btn-primary" onClick={async () => {
+                  const result = await requestNotifPermission();
+                  if (result === "granted") checkAndNotify();
+                }}>
+                  ENABLE NOTIFICATIONS
+                </button>
+              </div>
+            )}
+
+            {notifPerm === "granted" && (
+              <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:16 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 14px", borderRadius:8,
+                  background:T.okCardBg, border:`1px solid ${T.okBorder}` }}>
+                  <div style={{ width:8, height:8, borderRadius:"50%", background:T.okText, flexShrink:0 }} />
+                  <span style={{ fontSize:11, color:T.okText }}>Notifications are enabled</span>
+                </div>
+                <button className="btn btn-ghost" style={{ fontSize:11 }} onClick={() => { checkAndNotify(); setShowNotifPanel(false); }}>
+                  🔍 CHECK NOW — send alerts for anything due
+                </button>
+              </div>
+            )}
+
+            {/* What triggers notifications */}
+            <div style={{ borderTop:`1px solid ${T.border}`, paddingTop:14, marginTop:4 }}>
+              <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:10 }}>WHAT TRIGGERS A NOTIFICATION</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                {[
+                  { color:T.overdueBorder, label:"Overdue", desc:"Any maintenance item past its interval" },
+                  { color:T.dueSoonBorder, label:"Due soon", desc:"Within 1,000 mi or 60 days of interval" },
+                ].map(row => (
+                  <div key={row.label} style={{ display:"flex", alignItems:"center", gap:10, fontSize:11 }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background:row.color, flexShrink:0 }} />
+                    <span style={{ color:T.text, width:72 }}>{row.label}</span>
+                    <span style={{ color:T.textFaint }}>{row.desc}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize:10, color:T.textFaint, marginTop:12, lineHeight:1.6 }}>
+                💡 For scheduled daily reminders, add AutoKeeper to your home screen as a PWA — then open it each morning and it will check automatically.
+              </div>
+            </div>
+
+            <div style={{ marginTop:18 }}>
+              <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => setShowNotifPanel(false)}>CLOSE</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+            {/* ══════════ COST ANALYSIS PANEL ══════════ */}
+      {showCostPanel && (
+        <div className="overlay" onClick={() => setShowCostPanel(false)}>
+          <div className="modal" style={{ maxWidth:560 }} onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:22, letterSpacing:3, marginBottom:4, color:T.text }}>💰 IS THIS WORTH IT?</div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:20, lineHeight:1.7 }}>
+              A quick financial breakdown of what regular maintenance actually costs — and what skipping it could cost you.
+            </div>
+
+            {/* Annual cost estimate */}
+            {(() => {
+              const annualLow  = COST_DATA.maintenance.reduce((s,i) => s + i.low  * i.freqPerYear, 0);
+              const annualHigh = COST_DATA.maintenance.reduce((s,i) => s + i.high * i.freqPerYear, 0);
+              const perDayLow  = (annualLow  / 365).toFixed(2);
+              const perDayHigh = (annualHigh / 365).toFixed(2);
+              return (
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:10 }}>ESTIMATED ANNUAL MAINTENANCE COST</div>
+                  <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginBottom:10 }}>
+                    <div style={{ flex:1, minWidth:120, padding:"14px 16px", borderRadius:10, background:T.okCardBg, border:`1px solid ${T.okBorder}`, textAlign:"center" }}>
+                      <div style={{ fontFamily:"'Bebas Neue'", fontSize:28, color:T.okText }}>${Math.round(annualLow).toLocaleString()}–${Math.round(annualHigh).toLocaleString()}</div>
+                      <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1 }}>PER YEAR</div>
+                    </div>
+                    <div style={{ flex:1, minWidth:120, padding:"14px 16px", borderRadius:10, background:T.surface2, border:`1px solid ${T.border}`, textAlign:"center" }}>
+                      <div style={{ fontFamily:"'Bebas Neue'", fontSize:28, color:T.text }}>${perDayLow}–${perDayHigh}</div>
+                      <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1 }}>PER DAY</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize:10, color:T.textFaint, lineHeight:1.6 }}>
+                    That's the cost of a cup of coffee — or less — per day to keep your car running well.
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Maintenance breakdown */}
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:8 }}>WHAT YOU'RE SPENDING ON</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                {COST_DATA.maintenance.map((item,i) => (
+                  <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"6px 10px", borderRadius:6, background:i%2===0?T.surface:T.surface2, fontSize:11 }}>
+                    <span style={{ color:T.text }}>{item.name}</span>
+                    <div style={{ textAlign:"right" }}>
+                      <span style={{ color:T.okText }}>${item.low}–${item.high}</span>
+                      <span style={{ color:T.textFaint, fontSize:9, marginLeft:6 }}>{item.note}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* What skipping costs */}
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:9, color:T.overdueText, letterSpacing:1, marginBottom:8 }}>WHAT SKIPPING MAINTENANCE CAN COST</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                {COST_DATA.repairs.map((r,i) => (
+                  <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"6px 10px", borderRadius:6, background:i%2===0?T.overdueCardBg:T.surface2, fontSize:11 }}>
+                    <span style={{ color:T.text }}>{r.name}</span>
+                    <div style={{ textAlign:"right" }}>
+                      <span style={{ color:T.overdueText }}>${r.low.toLocaleString()}–${r.high.toLocaleString()}</span>
+                      <span style={{ color:T.textFaint, fontSize:9, marginLeft:6 }}>{r.note}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* vs. new car */}
+            <div style={{ padding:"14px 16px", borderRadius:10, background:T.dueSoonCardBg, border:`1px solid ${T.dueSoonBorder}`, marginBottom:20 }}>
+              <div style={{ fontSize:9, color:T.dueSoonText, letterSpacing:1, marginBottom:8 }}>VS. BUYING A NEW CAR</div>
+              {(() => {
+                const annualMaint = COST_DATA.maintenance.reduce((s,i) => s + (i.low+i.high)/2 * i.freqPerYear, 0);
+                const yearsOfMaint = Math.round(COST_DATA.newCarCost.low / annualMaint);
+                return (
+                  <>
+                    <div style={{ fontSize:12, color:T.text, lineHeight:1.7, marginBottom:8 }}>
+                      The average new car costs <strong style={{ color:T.dueSoonText }}>${COST_DATA.newCarCost.low.toLocaleString()}–${COST_DATA.newCarCost.high.toLocaleString()}</strong> — roughly <strong style={{ color:T.dueSoonText }}>${COST_DATA.newCarCost.avgMonthly}/month</strong> in payments. Full maintenance on your current car costs a fraction of that.
+                    </div>
+                    <div style={{ fontSize:12, color:T.text, lineHeight:1.7 }}>
+                      At average maintenance costs, you could keep your current car running for approximately <strong style={{ color:T.okText }}>{yearsOfMaint}+ years</strong> for what a single new car purchase costs. Every year you extend the life of your car instead of buying new saves you thousands.
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+
+            <div style={{ padding:"10px 14px", borderRadius:8, background:T.okCardBg, border:`1px solid ${T.okBorder}`, fontSize:11, color:T.okText, marginBottom:16, lineHeight:1.6 }}>
+              ✓ Regular maintenance doesn't just prevent breakdowns — it's one of the highest-return financial decisions you can make as a car owner.
+            </div>
+
+            <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => setShowCostPanel(false)}>CLOSE</button>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════ CARFAX IMPORT MODAL ══════════ */}
+      {showCarfaxModal && vehicle && (
+        <div className="overlay" onClick={() => { setShowCarfaxModal(false); setCarfaxResult(null); }}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:22, letterSpacing:3, marginBottom:4, color:T.text }}>📄 IMPORT CARFAX</div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:16, lineHeight:1.7 }}>
+              Upload a Carfax PDF report to automatically extract past service history into your log.
+              This uses AI to read the report — results will vary based on PDF quality and format.
+            </div>
+
+            {!carfaxResult && !carfaxParsing && (
+              <div>
+                <div style={{ border:`2px dashed ${T.border2}`, borderRadius:10, padding:"28px 20px", textAlign:"center", cursor:"pointer", background:T.surface2, marginBottom:14 }}
+                  onClick={() => document.getElementById('carfax-upload').click()}>
+                  <div style={{ fontSize:32, marginBottom:8 }}>📂</div>
+                  <div style={{ fontSize:12, color:T.text, marginBottom:4 }}>Tap to select your Carfax PDF</div>
+                  <div style={{ fontSize:10, color:T.textFaint }}>PDF files only · Your file is never uploaded to any server</div>
+                  <input id="carfax-upload" type="file" accept=".pdf,application/pdf" style={{ display:"none" }}
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      setCarfaxParsing(true);
+                      setCarfaxResult(null);
+                      try {
+                        // Read file as base64
+                        const base64 = await new Promise((res, rej) => {
+                          const reader = new FileReader();
+                          reader.onload = () => res(reader.result.split(',')[1]);
+                          reader.onerror = rej;
+                          reader.readAsDataURL(file);
+                        });
+                        // Call Claude API to parse the Carfax
+                        const response = await fetch("https://api.anthropic.com/v1/messages", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            model: "claude-sonnet-4-20250514",
+                            max_tokens: 1500,
+                            messages: [{
+                              role: "user",
+                              content: [
+                                { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64 } },
+                                { type: "text", text: "Extract all service/maintenance records from this Carfax report. Return ONLY a JSON array, no other text. Each item: { date: 'YYYY-MM-DD', service: 'service name', miles: number_or_null, notes: 'any details' }. Use null for unknown miles. Focus on oil changes, fluid services, inspections, tire services, brake work. If you cannot find any records, return []." }
+                              ]
+                            }]
+                          })
+                        });
+                        const data = await response.json();
+                        const text = (data.content||[]).map(b => b.text||"").join("");
+                        let records = [];
+                        try {
+                          const clean = text.replace(/```json|```/g,"").trim();
+                          records = JSON.parse(clean);
+                        } catch(pe) { records = []; }
+                        setCarfaxResult(records);
+                      } catch(err) {
+                        setCarfaxResult("error");
+                      }
+                      setCarfaxParsing(false);
+                    }} />
+                </div>
+                <div style={{ fontSize:10, color:T.textFaint, lineHeight:1.6, padding:"0 4px" }}>
+                  🔒 Your PDF is read locally and processed via the Claude API. It is not stored anywhere.
+                </div>
+              </div>
+            )}
+
+            {carfaxParsing && (
+              <div style={{ textAlign:"center", padding:"32px 20px" }}>
+                <div style={{ fontSize:32, marginBottom:12 }}>⏳</div>
+                <div style={{ fontSize:12, color:T.text }}>Reading your Carfax report...</div>
+                <div style={{ fontSize:10, color:T.textFaint, marginTop:4 }}>This takes a few seconds</div>
+              </div>
+            )}
+
+            {carfaxResult === "error" && (
+              <div>
+                <div style={{ padding:"12px 14px", borderRadius:8, background:T.overdueCardBg, border:`1px solid ${T.overdueBorder}`, fontSize:11, color:T.overdueText, marginBottom:14 }}>
+                  Could not read the PDF. Make sure it's a real Carfax PDF (not a scanned image) and try again.
+                </div>
+                <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => { setCarfaxResult(null); }}>TRY AGAIN</button>
+              </div>
+            )}
+
+            {Array.isArray(carfaxResult) && (
+              <div>
+                {carfaxResult.length === 0 ? (
+                  <div style={{ padding:"12px 14px", borderRadius:8, background:T.dueSoonCardBg, border:`1px solid ${T.dueSoonBorder}`, fontSize:11, color:T.dueSoonText, marginBottom:14 }}>
+                    No service records found in the PDF. The report may use an unsupported format or may not contain service history.
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ fontSize:11, color:T.okText, marginBottom:10 }}>✓ Found {carfaxResult.length} service record{carfaxResult.length!==1?"s":""}. Review below, then import.</div>
+                    <div style={{ maxHeight:260, overflowY:"auto", marginBottom:14, border:`1px solid ${T.border}`, borderRadius:8 }}>
+                      {carfaxResult.map((r,i) => (
+                        <div key={i} style={{ padding:"8px 12px", borderBottom:`1px solid ${T.tableRowBorder}`, fontSize:11 }}>
+                          <div style={{ display:"flex", justifyContent:"space-between" }}>
+                            <span style={{ color:T.text, fontWeight:500 }}>{r.service}</span>
+                            <span style={{ color:T.textFaint }}>{r.date}</span>
+                          </div>
+                          <div style={{ color:T.textFaint, fontSize:10, marginTop:2 }}>
+                            {r.miles ? `${Number(r.miles).toLocaleString()} mi` : "Miles unknown"}
+                            {r.notes ? ` · ${r.notes}` : ""}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display:"flex", gap:8 }}>
+                      <button className="btn btn-primary" style={{ flex:1 }} onClick={() => {
+                        // Match records to known items, add to logs
+                        const MATCH = {
+                          "oil": "oil-change", "lube": "oil-change", "filter": "oil-change",
+                          "transmission": "trans-fluid", "trans fluid": "trans-fluid",
+                          "coolant": "coolant", "thermostat": "coolant", "flush": "coolant",
+                          "brake fluid": "brake-fluid",
+                          "caliper": "caliper-grease", "brake grease": "caliper-grease",
+                        };
+                        const newLogs = { ...(logs[vehicle.id]||{}) };
+                        let matched = 0;
+                        carfaxResult.forEach(r => {
+                          const key = Object.keys(MATCH).find(k => r.service?.toLowerCase().includes(k));
+                          const itemId = key ? MATCH[key] : null;
+                          const logKey = itemId || "carfax-import";
+                          const entry = { date: r.date||"", miles: r.miles||"", notes: (r.notes||"") + " [Carfax import]", ts: Date.now() + matched };
+                          newLogs[logKey] = [...(newLogs[logKey]||[]), entry];
+                          matched++;
+                        });
+                        setLogs(prev => ({ ...prev, [vehicle.id]: newLogs }));
+                        setShowCarfaxModal(false);
+                        setCarfaxResult(null);
+                      }}>IMPORT {carfaxResult.length} RECORDS</button>
+                      <button className="btn btn-ghost" onClick={() => setCarfaxResult(null)}>RE-SCAN</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            <div style={{ marginTop:14 }}>
+              <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => { setShowCarfaxModal(false); setCarfaxResult(null); }}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+            {/* Add Vehicle Modal */}
+      {showAddVehicle&&(
+        <div className="overlay" onClick={() => setShowAddVehicle(false)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:22, letterSpacing:3, marginBottom:18, color:T.text }}>ADD VEHICLE</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div><label style={lbl}>NICKNAME (optional)</label>
+                <input placeholder="e.g. Daily Driver, Weekend Truck" value={newVehicle.nickname} onChange={e=>setNewVehicle(p=>({...p,nickname:e.target.value}))} /></div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+                <div><label style={lbl}>YEAR *</label>
+                  <input placeholder="2019" type="number" min="1900" max="2030" value={newVehicle.year} onChange={e=>setNewVehicle(p=>({...p,year:e.target.value}))} /></div>
+                <div><label style={lbl}>MAKE *</label>
+                  <select value={newVehicle.make} onChange={e=>setNewVehicle(p=>({...p,make:e.target.value}))}>
+                    <option value="">Select...</option>{MAKES.map(m=><option key={m} value={m}>{m}</option>)}</select></div>
+                <div><label style={lbl}>MODEL *</label>
+                  <input placeholder="Camry..." value={newVehicle.model} onChange={e=>setNewVehicle(p=>({...p,model:e.target.value}))} /></div>
+              </div>
+              <div><label style={lbl}>VIN (optional)</label>
+                <input placeholder="17-character VIN" maxLength={17} value={newVehicle.vin} onChange={e=>setNewVehicle(p=>({...p,vin:e.target.value.toUpperCase()}))} /></div>
+              <div><label style={lbl}>CURRENT ODOMETER (miles)</label>
+                <input placeholder="75000" type="number" value={newVehicle.odometer} onChange={e=>setNewVehicle(p=>({...p,odometer:e.target.value}))} /></div>
+              <div style={{ display:"flex", gap:8, marginTop:6 }}>
+                <button className="btn btn-primary" style={{ flex:1 }} onClick={addVehicle} disabled={!newVehicle.make||!newVehicle.model||!newVehicle.year}>ADD VEHICLE</button>
+                <button className="btn btn-ghost" onClick={() => setShowAddVehicle(false)}>CANCEL</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Log Maintenance Modal */}
+      {showLogModal&&vehicle&&(()=>{
+        const item = STATIC_ITEMS.find(i=>i.id===showLogModal);
+        if (!item) return null;
+        const pastLogs = getVehicleLogs(vehicle.id)[showLogModal]||[];
+        return (
+          <div className="overlay" onClick={() => setShowLogModal(null)}>
+            <div className="modal" onClick={e=>e.stopPropagation()}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:18 }}>
+                <span style={{ fontSize:26 }}>{item.icon}</span>
+                <div>
+                  <div style={{ fontFamily:"'Bebas Neue'", fontSize:19, letterSpacing:2, color:T.text }}>{item.name}</div>
+                  <div style={{ fontSize:10, color:T.textFaint }}>{item.description}</div>
+                  {item.id==="oil-change"&&(
+                    <div style={{ fontSize:10, color:T.accent, marginTop:2 }}>
+                      Interval: every {Number(vehicle.oilInterval||5000).toLocaleString()} miles
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+                <div><label style={lbl}>DATE COMPLETED</label>
+                  <input type="date" value={logEntry.date} onChange={e=>setLogEntry(p=>({...p,date:e.target.value}))} /></div>
+                {item.type==="mileage"&&(
+                  <div><label style={lbl}>ODOMETER AT SERVICE (miles)</label>
+                    <input type="number" placeholder={vehicle.odometer||"e.g. 75000"} value={logEntry.miles} onChange={e=>setLogEntry(p=>({...p,miles:e.target.value}))} /></div>
+                )}
+                <div><label style={lbl}>NOTES (optional)</label>
+                  <textarea rows={3} placeholder="Shop name, cost, observations..." value={logEntry.notes} onChange={e=>setLogEntry(p=>({...p,notes:e.target.value}))} style={{ resize:"vertical" }} /></div>
+                <div style={{ display:"flex", gap:8 }}>
+                  <button className="btn btn-primary" style={{ flex:1 }} onClick={logMaintenance}>✓ LOG SERVICE</button>
+                  <button className="btn btn-ghost" onClick={() => setShowLogModal(null)}>CANCEL</button>
+                </div>
+              </div>
+              {pastLogs.length>0&&(
+                <div style={{ marginTop:18, borderTop:`1px solid ${T.border}`, paddingTop:14 }}>
+                  <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:9 }}>HISTORY</div>
+                  {[...pastLogs].reverse().map((log,i)=>(
+                    <div key={i} style={{ fontSize:11, color:T.textMuted, marginBottom:5, paddingBottom:5, borderBottom:`1px solid ${T.historyDivider}` }}>
+                      {log.date}{log.miles?` · ${Number(log.miles).toLocaleString()} mi`:""}{log.notes?` · ${log.notes}`:""}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+    </div>
+  );
+}
+
+
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+
+  <script>
+    // Register service worker for offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+
+  <div id="attribution"></div>
+  <script>
+    // Inject attribution after React mounts
+    window.addEventListener('load', () => {
+      const el = document.getElementById('attribution');
+      if (el) {
+        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        el.style.cssText = `
+          text-align: center;
+          padding: 16px 20px 32px;
+          font-family: 'DM Mono', 'Courier New', monospace;
+          font-size: 10px;
+          letter-spacing: 1px;
+          color: ${dark ? '#333' : '#ccc'};
+        `;
+        el.textContent = 'Built with Claude by Anthropic';
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+          el.style.color = e.matches ? '#333' : '#ccc';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
