@@ -2,7 +2,7 @@
   "name": "AutoKeeper \u2014 Vehicle Maintenance",
   "short_name": "AutoKeeper",
   "description": "Track oil changes, tires, and all vehicle maintenance in one place.",
-  "start_url": "./autokeeper.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",

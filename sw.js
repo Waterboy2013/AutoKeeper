@@ -1,10 +1,10 @@
-// AutoKeeper Service Worker v2
+// AutoKeeper Service Worker v3
 // Caches the app shell and CDN scripts so it works fully offline after first load
 
-const CACHE = 'autokeeper-v2';
+const CACHE = 'autokeeper-v3';
 const PRECACHE = [
   './',
-  './autokeeper.html',
+  './index.html',
   './manifest.json',
   './icon-180.png',
   './icon-192.png',

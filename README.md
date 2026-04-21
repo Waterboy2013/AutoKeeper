@@ -1,93 +1,80 @@
-# AutoKeeper
+# AutoKeeper 🛢️
 ### Vehicle Maintenance Tracker
 
-A clean, private, offline-first web app for tracking everything your car needs — oil changes, tires, fluids, undercoating, and more. Installable on your phone like a native app. No account. No subscription. No ads. Your data never leaves your device.
+A clean, private, offline-first web app for tracking everything your car needs — oil changes, tires, fluids, undercoating, and more. Installable on your phone as a home screen app. No account. No subscription. No ads. Your data never leaves your device.
 
 ---
 
-## Features
+## 🚀 Open the App
 
-- **Multiple vehicles** — add as many cars as you own, switch between them instantly
-- **Oil change intervals** — choose 3,000 / 5,000 / or a custom mileage interval per vehicle
-- **Tire tracking** — separate all-season and winter tire sets, tread depth gauge with wear estimation, per-wheel measurements (FL/FR/RL/RR)
-- **Maintenance items** — oil change, caliper grease, undercoat, undercarriage wash, brake fluid, transmission fluid, coolant flush — ordered most to least frequent
-- **Status warnings** — color-coded OVERDUE / DUE SOON / OK / LOG IT indicators with progress bars
-- **Service log** — tap any item to log a completed service with date, odometer, and notes
-- **Maintenance history** — full chronological log of all services across all items
-- **CSV export** — download your full service history per vehicle
-- **Push notifications** — get alerted when maintenance is overdue or coming up soon
-- **Dark / light theme** — automatically follows your phone or computer's system setting
-- **Works offline** — fully functional with no internet connection after first load
-- **Installable PWA** — add to your home screen and use it like a native app
+**👉 [https://waterboy2013.github.io/AutoKeeper/](https://waterboy2013.github.io/AutoKeeper/)**
+
+Open that link in Safari on iPhone or Chrome on Android, then follow the install steps below.
 
 ---
 
-## Files
+## 📱 Install on Your Phone
+
+### iPhone
+1. Open the link above in **Safari** (must be Safari — Chrome on iPhone cannot install apps)
+2. Tap the **Share button** — the box with an arrow pointing up at the bottom of the screen
+3. Scroll down and tap **"Add to Home Screen"**
+4. Tap **Add** in the top right corner
+5. AutoKeeper now appears on your home screen and opens full-screen like a native app
+
+> ⚠️ Always open AutoKeeper from the home screen icon, not from Safari directly. This keeps your data consistent.
+
+### Android
+1. Open the link above in **Chrome**
+2. Tap the **⋮ menu** (three dots, top right)
+3. Tap **"Add to Home screen"** → **Add**
+
+---
+
+## 💻 Open on Desktop
+
+Open the link above in any browser and bookmark it. Data saves automatically.
+
+---
+
+## ✨ Features
+
+**Vehicles** — Add unlimited vehicles with year, make, model, nickname, VIN, and odometer. Update odometer anytime.
+
+**Maintenance** — Oil change (3k/5k/custom intervals), caliper grease, undercoat, undercarriage wash, brake fluid, transmission fluid, coolant flush. Color-coded OVERDUE / DUE SOON / OK status with progress bars. Skip option for mild-climate items.
+
+**Tires** — All-season and optional winter sets. Tread depth gauge with per-wheel measurements, wear estimation, tire pressure logging, rotation tracking with visual diagrams, patch/repair logging, flat tire and spare/donut tracking, new tire installation.
+
+**History** — Full service log with edit and delete. CSV export per vehicle.
+
+**Other** — Push notifications, financial analysis tool, Carfax PDF import, dark/light theme, offline support.
+
+---
+
+## 🔒 Privacy
+
+All data stays on your device. Nothing is sent to any server.
+
+> Tip: Export a CSV backup regularly before clearing browser storage.
+
+---
+
+## 🔄 Updates
+
+The app updates automatically when you open it after a new version is released. Your data is never affected by updates.
+
+---
+
+## 📁 Files
 
 | File | Purpose |
 |---|---|
-| `autokeeper.html` | The entire app — open this in any browser |
-| `sw.js` | Service worker — enables offline use and PWA installation |
-| `manifest.json` | PWA configuration — app name, icon, display mode |
-| `README.md` | This file |
-
----
-
-## How to Use
-
-### Option 1 — Open locally
-Download all three app files into the same folder. Double-click `autokeeper.html` to open it in your browser. Bookmark it for quick access. Your data saves automatically.
-
-### Option 2 — Install on your phone (recommended)
-
-**iPhone:**
-1. Open the hosted URL in **Safari**
-2. Tap the Share button → **Add to Home Screen** → Add
-3. Open AutoKeeper from your home screen — it runs full-screen like a native app
-
-**Android:**
-1. Open the hosted URL in **Chrome**
-2. Tap the ⋮ menu → **Add to Home screen** → Add
-
-> ⚠️ Always open the app from the home screen icon, not directly from the browser, to keep your data consistent.
-
-### Option 3 — Host it yourself (for a permanent URL)
-Upload the three app files to any static hosting service:
-- [Netlify Drop](https://app.netlify.com/drop) — drag and drop, free, no account needed
-- [GitHub Pages](https://pages.github.com) — free, permanent, version-controlled
-
----
-
-## Data & Privacy
-
-All data is stored locally in your browser's `localStorage`. Nothing is transmitted to any server. There is no backend, no database, no analytics, and no tracking of any kind.
-
-> **Tip:** Export a CSV backup regularly, especially before clearing your browser's cache or storage.
-
----
-
-## Notifications
-
-AutoKeeper can send push notifications when maintenance is overdue or due soon. Tap the 🔔 bell icon in the top-right corner to enable them. Notifications are checked automatically each time you open the app.
-
-> For the best notification experience, install AutoKeeper to your home screen as a PWA.
-
----
-
-## Updating
-
-When a new version is released, simply replace `autokeeper.html` (and `sw.js` if updated) with the new files. Your saved vehicles and service history are stored separately in `localStorage` and will not be affected.
-
-The current version is displayed in small text below the app title in the header.
-
----
-
-## Built With
-
-- [React 18](https://react.dev) — UI
-- [Babel Standalone](https://babeljs.io) — in-browser JSX compilation
-- [DM Mono + Bebas Neue](https://fonts.google.com) — typography
-- Web APIs — `localStorage`, `Notification`, `Service Worker`, `File System Access`
+| `index.html` | The entire app |
+| `sw.js` | Enables offline use and home screen installation |
+| `manifest.json` | PWA configuration |
+| `icon-180.png` | iPhone home screen icon |
+| `icon-192.png` | Android icon |
+| `icon-512.png` | High-res icon |
 
 ---
 
