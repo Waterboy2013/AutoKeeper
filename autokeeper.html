@@ -1390,6 +1390,7 @@ function App() {
   const [newVehicle, setNewVehicle]     = useState({ nickname:"",make:"",model:"",year:"",vin:"",odometer:"" });
   const [logEntry, setLogEntry]         = useState({ date:new Date().toISOString().slice(0,10), miles:"", notes:"" });
   const [showTip, setShowTip]           = useState(true);
+  const [editLogEntry, setEditLogEntry] = useState(null); // { logKey, index, entry }
   const [notifPerm, setNotifPerm]       = useState(() => typeof Notification !== "undefined" ? Notification.permission : "unsupported");
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [showCostPanel, setShowCostPanel]   = useState(false);
@@ -1546,17 +1547,42 @@ function App() {
 
   function allHistoryRows() {
     if (!vehicle) return [];
+    const vLogs = logs[vehicle.id]||{};
     const staticRows = STATIC_ITEMS.flatMap(item =>
-      (getVehicleLogs(vehicle.id)[item.id]||[]).map((log,i) => ({ ...log, itemName:item.name, icon:item.icon, key:`${item.id}-${i}`, ts:log.ts||0 }))
+      (vLogs[item.id]||[]).map((log,i) => ({ ...log, itemName:item.name, icon:item.icon, key:`${item.id}-${i}`, logKey:item.id, rawIndex:i, ts:log.ts||0 }))
     );
     const tireRows = ["allseason","winter"].flatMap(type =>
-      ((logs[vehicle.id]||{})[`tire-${type}`]||[]).map((log,i) => ({
+      (vLogs[`tire-${type}`]||[]).map((log,i) => ({
         ...log, icon:type==="allseason"?"🌤️":"❄️",
         itemName:`${type==="allseason"?"All-Season":"Winter"} Tires${log.isMountSwap?" (swap)":""}`,
-        key:`tire-${type}-${i}`, ts:log.ts||0
+        key:`tire-${type}-${i}`, logKey:`tire-${type}`, rawIndex:i, ts:log.ts||0
       }))
     );
     return [...staticRows,...tireRows].sort((a,b)=>b.ts-a.ts);
+  }
+
+  function deleteLog(logKey, index) {
+    if (!vehicle) return;
+    setLogs(prev => {
+      const vLogs = { ...(prev[vehicle.id]||{}) };
+      const arr = [...(vLogs[logKey]||[])];
+      arr.splice(index, 1);
+      vLogs[logKey] = arr;
+      return { ...prev, [vehicle.id]: vLogs };
+    });
+  }
+
+  function saveEditLog() {
+    if (!editLogEntry || !vehicle) return;
+    const { logKey, index, entry } = editLogEntry;
+    setLogs(prev => {
+      const vLogs = { ...(prev[vehicle.id]||{}) };
+      const arr = [...(vLogs[logKey]||[])];
+      arr[index] = { ...arr[index], ...entry };
+      vLogs[logKey] = arr;
+      return { ...prev, [vehicle.id]: vLogs };
+    });
+    setEditLogEntry(null);
   }
 
   async function exportCSV() {
@@ -1850,7 +1876,7 @@ function App() {
                   <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
                     <thead>
                       <tr style={{ borderBottom:`1px solid ${T.border}` }}>
-                        {["DATE","SERVICE","MILES","NOTES"].map(h=>(
+                        {["DATE","SERVICE","MILES","NOTES",""].map(h=>(
                           <th key={h} style={{ padding:"9px 14px", textAlign:"left", color:T.textFaint, fontWeight:400, letterSpacing:1, fontSize:9 }}>{h}</th>
                         ))}
                       </tr>
@@ -1862,6 +1888,16 @@ function App() {
                           <td style={{ padding:"9px 14px", color:T.text }}>{row.icon} {row.itemName}</td>
                           <td style={{ padding:"9px 14px", color:T.textMuted }}>{row.miles?Number(row.miles).toLocaleString():"—"}</td>
                           <td style={{ padding:"9px 14px", color:T.textFaint }}>{row.notes||"—"}</td>
+                          <td style={{ padding:"9px 8px", whiteSpace:"nowrap" }}>
+                            <button className="btn btn-ghost" style={{ fontSize:10, padding:"2px 7px", marginRight:4 }}
+                              onClick={() => setEditLogEntry({ logKey:row.logKey, index:row.rawIndex, entry:{ date:row.date||"", miles:row.miles||"", notes:row.notes||"" } })}>
+                              ✏️
+                            </button>
+                            <button className="btn btn-ghost" style={{ fontSize:10, padding:"2px 7px", color:T.overdueText }}
+                              onClick={() => { if(confirm("Delete this log entry?")) deleteLog(row.logKey, row.rawIndex); }}>
+                              🗑
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -2183,6 +2219,39 @@ function App() {
 
             <div style={{ marginTop:14 }}>
               <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => { setShowCarfaxModal(false); setCarfaxResult(null); }}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+            {/* Edit Log Entry Modal */}
+      {editLogEntry && vehicle && (
+        <div className="overlay" onClick={() => setEditLogEntry(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:16, color:T.text }}>
+              ✏️ EDIT LOG ENTRY
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div>
+                <label style={lbl}>DATE</label>
+                <input type="date" value={editLogEntry.entry.date}
+                  onChange={e => setEditLogEntry(p => ({ ...p, entry:{ ...p.entry, date:e.target.value } }))} />
+              </div>
+              <div>
+                <label style={lbl}>ODOMETER (miles)</label>
+                <input type="number" placeholder="e.g. 75000" value={editLogEntry.entry.miles}
+                  onChange={e => setEditLogEntry(p => ({ ...p, entry:{ ...p.entry, miles:e.target.value } }))} />
+              </div>
+              <div>
+                <label style={lbl}>NOTES</label>
+                <textarea rows={3} value={editLogEntry.entry.notes}
+                  onChange={e => setEditLogEntry(p => ({ ...p, entry:{ ...p.entry, notes:e.target.value } }))}
+                  style={{ resize:"vertical" }} />
+              </div>
+              <div style={{ display:"flex", gap:8, marginTop:4 }}>
+                <button className="btn btn-primary" style={{ flex:1 }} onClick={saveEditLog}>✓ SAVE CHANGES</button>
+                <button className="btn btn-ghost" onClick={() => setEditLogEntry(null)}>CANCEL</button>
+              </div>
             </div>
           </div>
         </div>

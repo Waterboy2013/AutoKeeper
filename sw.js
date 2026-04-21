@@ -1,11 +1,14 @@
-// AutoKeeper Service Worker v1
+// AutoKeeper Service Worker v2
 // Caches the app shell and CDN scripts so it works fully offline after first load
 
-const CACHE = 'autokeeper-v1';
+const CACHE = 'autokeeper-v2';
 const PRECACHE = [
   './',
   './autokeeper.html',
   './manifest.json',
+  './icon-180.png',
+  './icon-192.png',
+  './icon-512.png',
   'https://unpkg.com/react@18/umd/react.production.min.js',
   'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
   'https://unpkg.com/@babel/standalone/babel.min.js',
@@ -15,7 +18,6 @@ const PRECACHE = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE).then(cache => {
-      // Cache what we can; don't fail install if a CDN asset is unavailable
       return Promise.allSettled(PRECACHE.map(url => cache.add(url)));
     }).then(() => self.skipWaiting())
   );
@@ -30,7 +32,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Cache-first for same-origin and CDN assets; network-first for everything else
   const url = new URL(event.request.url);
   const isCDN = url.hostname.includes('unpkg.com') || url.hostname.includes('fonts.g');
   const isSameOrigin = url.origin === self.location.origin;
