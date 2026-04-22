@@ -38,6 +38,8 @@ const APP_VERSION = "1.0.0";
 // ─── Maintenance items — ordered most → least frequent ───────────────────────
 const STATIC_ITEMS = [
   { id:"oil-change",        name:"Oil Change",                        description:"Engine oil & filter replacement",                                      type:"mileage", intervalMiles:5000,  intervalLabel:"Every 5k miles",       icon:"🛢️" },
+  { id:"engine-air-filter", name:"Engine Air Filter",                 description:"Replace when dirty — improves fuel economy & engine performance",      type:"mileage", intervalMiles:15000, intervalLabel:"Every 15k miles",      icon:"💨", canPostpone:true, postponeMiles:7500 },
+  { id:"cabin-air-filter",  name:"Cabin Air Filter",                  description:"Check every 15k miles. Replace when light transparency drops by ~50% when held to sunlight.", type:"mileage", intervalMiles:15000, intervalLabel:"Check every 15k miles", icon:"🌬️", isInspect:true },
   { id:"caliper-grease",    name:"Grease Calipers",                   description:"Apply silicone grease to brake calipers",                              type:"time",    intervalMonths:12,   intervalLabel:"Once a year",          icon:"🔧" },
   { id:"undercoat",         name:"Lénine Undercoat",                  description:"Apply undercoating — avoid rubber components (~$150)",                 type:"time",    intervalMonths:12,   intervalLabel:"Once a year",          icon:"🛡️" },
   { id:"undercarriage-wash",name:"Undercarriage Wash",                description:"Pre-winter + one warm mid-winter + post-winter. Skip below freezing.",type:"seasonal",                     intervalLabel:"Seasonal (3×/winter)", icon:"🚿" },
@@ -1391,6 +1393,8 @@ function App() {
   const [logEntry, setLogEntry]         = useState({ date:new Date().toISOString().slice(0,10), miles:"", notes:"" });
   const [showTip, setShowTip]           = useState(true);
   const [editLogEntry, setEditLogEntry] = useState(null); // { logKey, index, entry }
+  const [showBatteryModal, setShowBatteryModal] = useState(false);
+  const [batteryEventEntry, setBatteryEventEntry] = useState({ date:new Date().toISOString().slice(0,10), miles:"", eventType:"boost", notes:"" });
   const [notifPerm, setNotifPerm]       = useState(() => typeof Notification !== "undefined" ? Notification.permission : "unsupported");
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [showCostPanel, setShowCostPanel]   = useState(false);
@@ -1514,6 +1518,12 @@ function App() {
 
   function effectiveInterval(item) {
     if (item.id === "oil-change") return Number(vehicle?.oilInterval || item.intervalMiles);
+    // Postpone: if last log was a postpone, use shorter interval
+    if (item.canPostpone && item.postponeMiles) {
+      const vLogs = getVehicleLogs(vehicle?.id||"")[item.id]||[];
+      const last = vLogs[vLogs.length-1];
+      if (last?.isPostpone) return item.postponeMiles;
+    }
     return item.intervalMiles;
   }
 
@@ -1558,7 +1568,13 @@ function App() {
         key:`tire-${type}-${i}`, logKey:`tire-${type}`, rawIndex:i, ts:log.ts||0
       }))
     );
-    return [...staticRows,...tireRows].sort((a,b)=>b.ts-a.ts);
+    const batteryRows = (vLogs["battery"]||[]).map((log,i) => ({
+      ...log,
+      icon:{ boost:"⚡", dead:"💀", replacement:"🔋", test:"🔬" }[log.eventType]||"🔋",
+      itemName:`Battery — ${log.eventType}`,
+      key:`battery-${i}`, logKey:"battery", rawIndex:i, ts:log.ts||0
+    }));
+    return [...staticRows,...tireRows,...batteryRows].sort((a,b)=>b.ts-a.ts);
   }
 
   function deleteLog(logKey, index) {
@@ -1751,6 +1767,119 @@ function App() {
             {/* ── Tires ── */}
             <TireSection vehicle={vehicle} logs={logs} setLogs={setLogs} T={T} dark={dark} />
 
+            {/* ── Battery ── */}
+            {(() => {
+              const batt = vehicle.battery || {};
+              const installDate = batt.installDate || "";
+              const climate = batt.climate || "moderate";
+              const maxYears = climate === "cold" ? 4 : climate === "hot" ? 4 : 5;
+              const battLogs = (logs[vehicle.id]||{})["battery"] || [];
+              const boosts  = battLogs.filter(l => l.eventType === "boost");
+              const deads   = battLogs.filter(l => l.eventType === "dead");
+              const lastBoost = boosts[boosts.length-1];
+              const lastDead  = deads[deads.length-1];
+
+              // Age calculation
+              let ageYears = null, ageStatus = "unknown", ageColor = T.textFaint;
+              if (installDate) {
+                const installed = new Date(installDate);
+                ageYears = ((Date.now() - installed.getTime()) / (1000*60*60*24*365.25));
+                const pct = ageYears / maxYears;
+                if (pct >= 1)       { ageStatus = "REPLACE SOON"; ageColor = T.overdueText; }
+                else if (pct >= 0.8){ ageStatus = "MONITOR";      ageColor = T.dueSoonText; }
+                else                { ageStatus = "OK";            ageColor = T.okText; }
+              }
+
+              return (
+                <div style={{ marginBottom:24 }}>
+                  <div style={{ fontFamily:"'Bebas Neue'", fontSize:16, letterSpacing:3, color:T.textMuted, marginBottom:12 }}>BATTERY</div>
+                  <div className="card" style={{ padding:16,
+                    borderLeft:`3px solid ${ageStatus==="REPLACE SOON"?T.overdueBorder:ageStatus==="MONITOR"?T.dueSoonBorder:ageStatus==="OK"?T.okBorder:T.border}`,
+                    background:ageStatus==="REPLACE SOON"?T.overdueCardBg:ageStatus==="MONITOR"?T.dueSoonCardBg:ageStatus==="OK"?T.okCardBg:T.surface }}>
+
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
+                      <div>
+                        <div style={{ fontSize:13, fontWeight:500, color:T.text, marginBottom:2 }}>🔋 Car Battery</div>
+                        {batt.brand && <div style={{ fontSize:10, color:T.textFaint }}>{batt.brand}</div>}
+                        <div style={{ fontSize:10, color:T.textFaint, marginTop:2 }}>
+                          Typical lifespan: <strong style={{ color:T.text }}>{maxYears} years</strong>
+                          {climate === "cold" && <span style={{ color:T.dueSoonText }}> (cold climate — shorter)</span>}
+                          {climate === "hot"  && <span style={{ color:T.dueSoonText }}> (hot climate — shorter)</span>}
+                        </div>
+                      </div>
+                      <div style={{ display:"flex", gap:6, flexShrink:0, marginLeft:8 }}>
+                        <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Edit battery info"
+                          onClick={() => {
+                            const brand     = prompt("Battery brand/model (optional):", batt.brand||"") ?? batt.brand||"";
+                            const iDate     = prompt("Install date (YYYY-MM-DD) — check the sticker on the battery:", batt.installDate||"");
+                            const clim      = prompt("Climate (type: cold / moderate / hot):", batt.climate||"moderate");
+                            const validClim = ["cold","moderate","hot"].includes(clim) ? clim : "moderate";
+                            if (iDate !== null) {
+                              setVehicles(prev => prev.map(v => v.id===vehicle.id ? { ...v, battery:{ ...batt, brand, installDate:iDate||"", climate:validClim } } : v));
+                            }
+                          }}>✏️</button>
+                        <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log battery event"
+                          onClick={() => { setShowBatteryModal(true); setBatteryEventEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", eventType:"boost", notes:"" }); }}>
+                          + LOG
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Age bar */}
+                    {ageYears !== null && (
+                      <div style={{ marginBottom:8 }}>
+                        <div style={{ height:5, borderRadius:3, background:T.border, overflow:"hidden", marginBottom:5 }}>
+                          <div style={{ height:"100%", borderRadius:3, transition:"width 0.4s",
+                            width:`${Math.min(100, (ageYears/maxYears)*100)}%`,
+                            background: ageYears/maxYears>=1?"#e74c3c":ageYears/maxYears>=0.8?"#e67e22":"#27ae60" }} />
+                        </div>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                          <span style={{ fontSize:10, color:ageColor, fontWeight:500 }}>
+                            {ageStatus} · {ageYears.toFixed(1)} yrs old
+                          </span>
+                          <span style={{ fontSize:9, color:T.textFaint }}>
+                            Installed: {installDate}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {!installDate && (
+                      <div style={{ fontSize:10, color:T.textFaint, fontStyle:"italic", marginBottom:8 }}>
+                        Tap ✏️ to add install date — check the sticker on top of the battery for the month/year code.
+                      </div>
+                    )}
+
+                    {/* Climate note */}
+                    {!batt.climate && (
+                      <div style={{ fontSize:9, color:T.textFaint, lineHeight:1.5, marginBottom:6 }}>
+                        💡 Set your climate in ✏️ — cold winters reduce battery lifespan to ~3–4 years due to hard cold starts.
+                      </div>
+                    )}
+
+                    {/* Event summary */}
+                    <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:6 }}>
+                      {boosts.length > 0 && (
+                        <span style={{ fontSize:9, color:T.dueSoonText }}>
+                          ⚡ {boosts.length} boost{boosts.length!==1?"s":""} logged
+                          {lastBoost && ` · last ${lastBoost.date}`}
+                        </span>
+                      )}
+                      {deads.length > 0 && (
+                        <span style={{ fontSize:9, color:T.overdueText }}>
+                          💀 {deads.length} complete dead{deads.length!==1?"s":""}
+                          {lastDead && ` · last ${lastDead.date}`}
+                        </span>
+                      )}
+                      {boosts.length===0 && deads.length===0 && (
+                        <span style={{ fontSize:9, color:T.noRecordText }}>No events logged yet</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* ── Maintenance ── */}
             <div className="sec-title">MAINTENANCE</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(285px,1fr))", gap:12, marginBottom:28 }}>
@@ -1854,6 +1983,35 @@ function App() {
                             </button>
                           </div>
                         )}
+                      </div>
+                    )}
+                    {/* Postpone button for engine air filter */}
+                    {item.canPostpone && !vehicle.skipped?.[item.id] && getItemStatus(item)==="overdue" && (
+                      <div style={{ marginTop:8, paddingTop:7, borderTop:`1px solid ${T.border}` }} onClick={e=>e.stopPropagation()}>
+                        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:8 }}>
+                          <span style={{ fontSize:9, color:T.textFaint, flex:1, lineHeight:1.5 }}>
+                            Not ready to replace yet? Postpone — recheck in {(item.postponeMiles||0).toLocaleString()} miles.
+                          </span>
+                          <button className="btn btn-ghost" style={{ fontSize:9, padding:"2px 8px", flexShrink:0 }}
+                            onClick={() => {
+                              setLogs(prev => ({
+                                ...prev,
+                                [vehicle.id]:{ ...(prev[vehicle.id]||{}),
+                                  [item.id]:[...((prev[vehicle.id]||{})[item.id]||[]),
+                                    { date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", notes:"Postponed — recheck in "+((item.postponeMiles||0).toLocaleString())+" mi", isPostpone:true, ts:Date.now() }
+                                  ]
+                                }
+                              }));
+                            }}>
+                            POSTPONE
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {/* Inspect tip for cabin air filter */}
+                    {item.isInspect && !vehicle.skipped?.[item.id] && (getItemStatus(item)==="overdue"||getItemStatus(item)==="due-soon") && (
+                      <div style={{ marginTop:6, fontSize:9, color:T.dueSoonText, lineHeight:1.5 }}>
+                        💡 Hold filter up to sunlight — replace if light transmission is reduced by half or more.
                       </div>
                     )}
                     {vLogs.length===0&&!vehicle.skipped?.[item.id]&&<div style={{ fontSize:10, color:T.noRecordText, marginTop:3 }}>No records yet — tap to log</div>}
@@ -2220,6 +2378,112 @@ function App() {
             <div style={{ marginTop:14 }}>
               <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => { setShowCarfaxModal(false); setCarfaxResult(null); }}>CANCEL</button>
             </div>
+          </div>
+        </div>
+      )}
+
+            {/* ── Battery Event Modal ── */}
+      {showBatteryModal && vehicle && (
+        <div className="overlay" onClick={() => setShowBatteryModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:4, color:T.text }}>
+              🔋 LOG BATTERY EVENT
+            </div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:16, lineHeight:1.6 }}>
+              Log a boost, complete dead, or replacement. Patterns of boosts and deads help you know when it's time to replace.
+            </div>
+
+            {/* Event type */}
+            <div style={{ marginBottom:14 }}>
+              <label style={lbl}>EVENT TYPE</label>
+              <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                {[
+                  { id:"boost",       icon:"⚡", label:"Jump Start / Boost",    desc:"Battery was dead, needed a jump. Still in use." },
+                  { id:"dead",        icon:"💀", label:"Complete Dead",          desc:"Battery fully died — no response at all, possibly left lights on or extended drain." },
+                  { id:"replacement", icon:"🔋", label:"Battery Replaced",       desc:"New battery installed. Resets the age tracking." },
+                  { id:"test",        icon:"🔬", label:"Battery Test",           desc:"Had battery tested at a shop. Log the result in notes." },
+                ].map(ev => {
+                  const isSel = batteryEventEntry.eventType === ev.id;
+                  return (
+                    <div key={ev.id} style={{ padding:"10px 14px", borderRadius:8, cursor:"pointer",
+                      background: isSel ? (dark?"#1a0a0a":"#fff5f5") : T.surface2,
+                      border:`2px solid ${isSel ? T.accent : T.border2}` }}
+                      onClick={() => setBatteryEventEntry(p=>({...p, eventType:ev.id}))}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                        <span style={{ fontSize:18 }}>{ev.icon}</span>
+                        <div>
+                          <div style={{ fontSize:12, color: isSel?T.accent:T.text, fontWeight:500 }}>{ev.label}</div>
+                          <div style={{ fontSize:10, color:T.textFaint, marginTop:1 }}>{ev.desc}</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Replacement warning */}
+            {batteryEventEntry.eventType === "replacement" && (
+              <div style={{ marginBottom:12, padding:"10px 12px", borderRadius:8, background:T.okCardBg, border:`1px solid ${T.okBorder}`, fontSize:11, color:T.okText, lineHeight:1.6 }}>
+                ✓ Logging a replacement will reset the battery age clock. Update the install date in ✏️ Battery Info to match the new battery's sticker date.
+              </div>
+            )}
+
+            {batteryEventEntry.eventType === "boost" && (
+              <div style={{ marginBottom:12, padding:"10px 12px", borderRadius:8, background:T.dueSoonCardBg, border:`1px solid ${T.dueSoonBorder}`, fontSize:11, color:T.dueSoonText, lineHeight:1.6 }}>
+                ⚡ One boost can happen to anyone. Two or more boosts within a year is a sign the battery is failing and should be tested or replaced.
+              </div>
+            )}
+
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                <div><label style={lbl}>DATE</label>
+                  <input type="date" value={batteryEventEntry.date} onChange={e=>setBatteryEventEntry(p=>({...p,date:e.target.value}))} /></div>
+                <div><label style={lbl}>ODOMETER</label>
+                  <input type="number" placeholder={vehicle.odometer||""} value={batteryEventEntry.miles} onChange={e=>setBatteryEventEntry(p=>({...p,miles:e.target.value}))} /></div>
+              </div>
+              <div><label style={lbl}>NOTES (optional)</label>
+                <textarea rows={2} placeholder={
+                  batteryEventEntry.eventType==="test" ? "Test result: Good / Fair / Replace · CCA reading..." :
+                  batteryEventEntry.eventType==="replacement" ? "Brand, model, CCA rating, warranty..." :
+                  "Circumstances, temperature, how long since last drive..."
+                } value={batteryEventEntry.notes} onChange={e=>setBatteryEventEntry(p=>({...p,notes:e.target.value}))} style={{ resize:"vertical" }} /></div>
+            </div>
+
+            <div style={{ display:"flex", gap:8, marginTop:14 }}>
+              <button className="btn btn-primary" style={{ flex:1 }} onClick={() => {
+                const entry = { ...batteryEventEntry, ts:Date.now() };
+                setLogs(prev => ({
+                  ...prev,
+                  [vehicle.id]:{ ...(prev[vehicle.id]||{}), battery:[...((prev[vehicle.id]||{}).battery||[]), entry] }
+                }));
+                // If replacement, update install date automatically
+                if (batteryEventEntry.eventType === "replacement" && batteryEventEntry.date) {
+                  setVehicles(prev => prev.map(v => v.id===vehicle.id
+                    ? { ...v, battery:{ ...(v.battery||{}), installDate:batteryEventEntry.date } }
+                    : v));
+                }
+                setShowBatteryModal(false);
+              }}>✓ LOG EVENT</button>
+              <button className="btn btn-ghost" onClick={() => setShowBatteryModal(false)}>CANCEL</button>
+            </div>
+
+            {/* Past battery events */}
+            {((logs[vehicle.id]||{}).battery||[]).length > 0 && (
+              <div style={{ marginTop:16, borderTop:`1px solid ${T.border}`, paddingTop:12 }}>
+                <div style={{ fontSize:9, color:T.textFaint, letterSpacing:1, marginBottom:8 }}>BATTERY HISTORY</div>
+                {[...((logs[vehicle.id]||{}).battery||[])].reverse().map((e,i) => {
+                  const icons = { boost:"⚡", dead:"💀", replacement:"🔋", test:"🔬" };
+                  return (
+                    <div key={i} style={{ fontSize:11, color:T.textMuted, marginBottom:5, paddingBottom:5, borderBottom:`1px solid ${T.historyDivider}` }}>
+                      {icons[e.eventType]||"🔋"} {e.eventType} · {e.date}
+                      {e.miles ? ` · ${Number(e.miles).toLocaleString()} mi` : ""}
+                      {e.notes ? ` · ${e.notes}` : ""}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
