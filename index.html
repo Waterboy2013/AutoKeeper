@@ -33,7 +33,7 @@
 
 
 const STORAGE_KEY = "vehicle-maintenance-app-v3";
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 
 // ─── Maintenance items — ordered most → least frequent ───────────────────────
 const STATIC_ITEMS = [
@@ -334,30 +334,36 @@ function TireSection({ vehicle, logs, setLogs, T, dark }) {
                 Replace interval: {Number(tc.intervalMiles).toLocaleString()} mi
               </div>
             </div>
-            <div style={{ display:"flex", gap:5, flexShrink:0, marginLeft:8 }}>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Edit tire info" onClick={() => openEdit(type)}>✏️</button>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Measure tread" onClick={() => openTread(type)}>📏</button>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log service" onClick={() => openLog(type)}>+ LOG</button>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log tire pressure fill"
-                onClick={() => { setShowPsiModal(type); setPsiEntry({ date:new Date().toISOString().slice(0,10), fl_before:"", fr_before:"", rl_before:"", rr_before:"", fl_after:"", fr_after:"", rl_after:"", rr_after:"", targetPsi: tc.optimalPsi||"", notes:"" }); }}>
-                💨
-              </button>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log flat tire"
-                onClick={() => { setShowFlatModal(type); setFlatEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", position:"fl", cause:"", spareType:"donut", spareMilesStart:vehicle.odometer||"", spareMilesEnd:"", spareResolved:false, spareResolvedDate:"", notes:"" }); }}>
-                🔴
-              </button>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log patch or repair"
-                onClick={() => { setShowPatchModal(type); setPatchEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", position:"fl", type:"patch", notes:"" }); }}>
-                🩹
-              </button>
-              <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log rotation"
-                onClick={() => { setShowRotationModal(type); setRotEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", pattern:"forward-cross", notes:"" }); }}>
-                🔄
-              </button>
-              <button className="btn" style={{ fontSize:10, padding:"4px 7px", background:T.okCardBg, color:T.okText, border:`1px solid ${T.okBorder}` }} title="Replace with new tires"
-                onClick={() => { setShowNewTireModal(type); setNewTireEntry({ brand: tc.brand||"", size: tc.size||"", treadNew:"10", date:new Date().toISOString().slice(0,10), tiresReplaced:"4" }); }}>
-                🆕
-              </button>
+            <div style={{ display:"flex", flexDirection:"column", gap:4, flexShrink:0, marginLeft:8 }}>
+              {/* Row 1 */}
+              <div style={{ display:"flex", gap:4 }}>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Edit tire info" onClick={() => openEdit(type)}>✏️</button>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Measure tread" onClick={() => openTread(type)}>📏</button>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log pressure"
+                  onClick={() => { setShowPsiModal(type); setPsiEntry({ date:new Date().toISOString().slice(0,10), fl_before:"", fr_before:"", rl_before:"", rr_before:"", fl_after:"", fr_after:"", rl_after:"", rr_after:"", targetPsi:tc.optimalPsi||"", notes:"" }); }}>
+                  💨
+                </button>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log flat"
+                  onClick={() => { setShowFlatModal(type); setFlatEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", position:"fl", cause:"", spareType:"donut", spareMilesStart:vehicle.odometer||"", spareMilesEnd:"", spareResolved:false, spareResolvedDate:"", notes:"" }); }}>
+                  🔴
+                </button>
+              </div>
+              {/* Row 2 */}
+              <div style={{ display:"flex", gap:4 }}>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log service" onClick={() => openLog(type)}>+ LOG</button>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log patch/repair"
+                  onClick={() => { setShowPatchModal(type); setPatchEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", position:"fl", type:"patch", notes:"" }); }}>
+                  🩹
+                </button>
+                <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log rotation"
+                  onClick={() => { setShowRotationModal(type); setRotEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", pattern:"forward-cross", notes:"" }); }}>
+                  🔄
+                </button>
+                <button className="btn" style={{ fontSize:10, padding:"4px 7px", background:T.okCardBg, color:T.okText, border:`1px solid ${T.okBorder}` }} title="New tires"
+                  onClick={() => { setShowNewTireModal(type); setNewTireEntry({ brand:tc.brand||"", size:tc.size||"", treadNew:"10", date:new Date().toISOString().slice(0,10), tiresReplaced:"4" }); }}>
+                  🆕
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1395,6 +1401,15 @@ function App() {
   const [editLogEntry, setEditLogEntry] = useState(null); // { logKey, index, entry }
   const [showBatteryModal, setShowBatteryModal] = useState(false);
   const [batteryEventEntry, setBatteryEventEntry] = useState({ date:new Date().toISOString().slice(0,10), miles:"", eventType:"boost", notes:"" });
+  // Replace all prompt() calls — broken on iOS PWA
+  const [showOdoModal, setShowOdoModal]         = useState(false);
+  const [odoInput, setOdoInput]                 = useState("");
+  const [showOilCustomModal, setShowOilCustomModal] = useState(false);
+  const [oilCustomInput, setOilCustomInput]     = useState("");
+  const [showBatteryEditModal, setShowBatteryEditModal] = useState(false);
+  const [batteryEditForm, setBatteryEditForm]   = useState({ brand:"", installDate:"", climate:"moderate" });
+  const [showNicknameModal, setShowNicknameModal] = useState(false);
+  const [nicknameInput, setNicknameInput]       = useState("");
   const [notifPerm, setNotifPerm]       = useState(() => typeof Notification !== "undefined" ? Notification.permission : "unsupported");
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [showCostPanel, setShowCostPanel]   = useState(false);
@@ -1750,11 +1765,8 @@ function App() {
                 {overdueCount>0&&<span className="tag" style={{ background:T.overdueCardBg,color:T.overdueText,border:`1px solid ${T.overdueBorder}` }}>{overdueCount} OVERDUE</span>}
                 {dueSoonCount>0&&<span className="tag" style={{ background:T.dueSoonCardBg,color:T.dueSoonText,border:`1px solid ${T.dueSoonBorder}` }}>{dueSoonCount} DUE SOON</span>}
                 <div style={{ display:"flex", gap:6 }}>
-                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 11px" }} onClick={() => {
-                    const odo = prompt("Enter corrected odometer reading (miles):", vehicle.odometer||"");
-                    if (odo!==null&&!isNaN(odo)&&odo.trim()!=="")
-                      setVehicles(prev => prev.map(v => v.id===vehicle.id?{...v,odometer:odo.trim()}:v));
-                  }}>✏️ ODO</button>
+                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 11px" }} onClick={() => { setNicknameInput(vehicle.nickname||""); setShowNicknameModal(true); }}>✏️ NAME</button>
+                  <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 11px" }} onClick={() => { setOdoInput(vehicle.odometer||""); setShowOdoModal(true); }}>✏️ ODO</button>
                   <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 9px" }}
                     onClick={() => setShowCarfaxModal(true)} title="Import Carfax PDF">📄 CARFAX</button>
                   <button className="btn btn-ghost" style={{ fontSize:10, padding:"6px 9px", color:"#e74c3c" }} onClick={() => {
@@ -1810,13 +1822,8 @@ function App() {
                       <div style={{ display:"flex", gap:6, flexShrink:0, marginLeft:8 }}>
                         <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Edit battery info"
                           onClick={() => {
-                            const brand     = prompt("Battery brand/model (optional):", batt.brand||"") ?? batt.brand||"";
-                            const iDate     = prompt("Install date (YYYY-MM-DD) — check the sticker on the battery:", batt.installDate||"");
-                            const clim      = prompt("Climate (type: cold / moderate / hot):", batt.climate||"moderate");
-                            const validClim = ["cold","moderate","hot"].includes(clim) ? clim : "moderate";
-                            if (iDate !== null) {
-                              setVehicles(prev => prev.map(v => v.id===vehicle.id ? { ...v, battery:{ ...batt, brand, installDate:iDate||"", climate:validClim } } : v));
-                            }
+                            setBatteryEditForm({ brand:batt.brand||"", installDate:batt.installDate||"", climate:batt.climate||"moderate" });
+                            setShowBatteryEditModal(true);
                           }}>✏️</button>
                         <button className="btn btn-ghost" style={{ fontSize:10, padding:"4px 7px" }} title="Log battery event"
                           onClick={() => { setShowBatteryModal(true); setBatteryEventEntry({ date:new Date().toISOString().slice(0,10), miles:vehicle.odometer||"", eventType:"boost", notes:"" }); }}>
@@ -1930,9 +1937,8 @@ function App() {
                               border:`1px solid ${isActive ? T.accent : T.border2}`,
                             }} onClick={() => {
                               if (isCustom) {
-                                const val = prompt("Enter custom oil change interval (miles):", curInterval);
-                                if (val!==null && !isNaN(val) && Number(val)>0)
-                                  setVehicles(prev => prev.map(v => v.id===vehicle.id?{...v,oilInterval:Number(val)}:v));
+                                setOilCustomInput(String(curInterval));
+                                setShowOilCustomModal(true);
                               } else {
                                 setVehicles(prev => prev.map(v => v.id===vehicle.id?{...v,oilInterval:opt}:v));
                               }
@@ -2377,6 +2383,110 @@ function App() {
 
             <div style={{ marginTop:14 }}>
               <button className="btn btn-ghost" style={{ width:"100%" }} onClick={() => { setShowCarfaxModal(false); setCarfaxResult(null); }}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+            {/* Odometer update modal */}
+      {showOdoModal && vehicle && (
+        <div className="overlay" onClick={() => setShowOdoModal(false)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:16, color:T.text }}>UPDATE ODOMETER</div>
+            <label style={lbl}>CURRENT ODOMETER READING (miles)</label>
+            <input type="number" placeholder="e.g. 78500" value={odoInput} onChange={e=>setOdoInput(e.target.value)} autoFocus style={{ marginBottom:14 }} />
+            <div style={{ display:"flex", gap:8 }}>
+              <button className="btn btn-primary" style={{ flex:1 }} onClick={() => {
+                if (odoInput && !isNaN(odoInput)) setVehicles(prev=>prev.map(v=>v.id===vehicle.id?{...v,odometer:odoInput.trim()}:v));
+                setShowOdoModal(false);
+              }}>SAVE</button>
+              <button className="btn btn-ghost" onClick={()=>setShowOdoModal(false)}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Oil interval custom modal */}
+      {showOilCustomModal && vehicle && (
+        <div className="overlay" onClick={() => setShowOilCustomModal(false)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:6, color:T.text }}>CUSTOM OIL INTERVAL</div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:14, lineHeight:1.6 }}>
+              Common intervals: 3,000 mi (conventional) · 5,000 mi (semi-synthetic) · 7,500–10,000 mi (full synthetic). Check your owner's manual.
+            </div>
+            <label style={lbl}>CHANGE EVERY (miles)</label>
+            <input type="number" placeholder="e.g. 7500" value={oilCustomInput} onChange={e=>setOilCustomInput(e.target.value)} autoFocus style={{ marginBottom:14 }} />
+            <div style={{ display:"flex", gap:8 }}>
+              <button className="btn btn-primary" style={{ flex:1 }} onClick={() => {
+                if (oilCustomInput && !isNaN(oilCustomInput) && Number(oilCustomInput)>0)
+                  setVehicles(prev=>prev.map(v=>v.id===vehicle.id?{...v,oilInterval:Number(oilCustomInput)}:v));
+                setShowOilCustomModal(false);
+              }}>SAVE</button>
+              <button className="btn btn-ghost" onClick={()=>setShowOilCustomModal(false)}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Battery edit modal */}
+      {showBatteryEditModal && vehicle && (
+        <div className="overlay" onClick={() => setShowBatteryEditModal(false)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:16, color:T.text }}>🔋 BATTERY INFO</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              <div>
+                <label style={lbl}>BRAND / MODEL (optional)</label>
+                <input placeholder="e.g. DieHard Gold, Interstate MTP" value={batteryEditForm.brand} onChange={e=>setBatteryEditForm(p=>({...p,brand:e.target.value}))} />
+              </div>
+              <div>
+                <label style={lbl}>INSTALL DATE — from sticker on battery</label>
+                <input type="date" value={batteryEditForm.installDate} onChange={e=>setBatteryEditForm(p=>({...p,installDate:e.target.value}))} />
+                <div style={{ fontSize:9, color:T.textFaint, marginTop:3, lineHeight:1.5 }}>
+                  Look on top of the battery for a sticker or stamp showing the month and year it was manufactured or installed (e.g. "03/22" = March 2022).
+                </div>
+              </div>
+              <div>
+                <label style={lbl}>CLIMATE</label>
+                <div style={{ display:"flex", gap:8 }}>
+                  {[["cold","❄️ Cold","Harsh winters, frequent sub-freezing starts"],["moderate","🌤️ Moderate","Mild seasons, occasional cold"],["hot","☀️ Hot","High heat, desert or southern climates"]].map(([val,label,desc])=>(
+                    <div key={val} style={{ flex:1, padding:"8px 10px", borderRadius:8, cursor:"pointer",
+                      background: batteryEditForm.climate===val?(dark?"#1a0a0a":"#fff5f5"):T.surface2,
+                      border:`2px solid ${batteryEditForm.climate===val?T.accent:T.border2}` }}
+                      onClick={()=>setBatteryEditForm(p=>({...p,climate:val}))}>
+                      <div style={{ fontSize:11, color:batteryEditForm.climate===val?T.accent:T.text, fontWeight:500 }}>{label}</div>
+                      <div style={{ fontSize:9, color:T.textFaint, marginTop:2 }}>{desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:8, marginTop:14 }}>
+              <button className="btn btn-primary" style={{ flex:1 }} onClick={() => {
+                setVehicles(prev=>prev.map(v=>v.id===vehicle.id?{...v,battery:{...(v.battery||{}),...batteryEditForm}}:v));
+                setShowBatteryEditModal(false);
+              }}>SAVE</button>
+              <button className="btn btn-ghost" onClick={()=>setShowBatteryEditModal(false)}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Nickname edit modal */}
+      {showNicknameModal && vehicle && (
+        <div className="overlay" onClick={() => setShowNicknameModal(false)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, letterSpacing:3, marginBottom:6, color:T.text }}>EDIT VEHICLE NAME</div>
+            <div style={{ fontSize:11, color:T.textFaint, marginBottom:14 }}>
+              Nickname shown on the tab and vehicle header. Leave blank to use Year Make Model.
+            </div>
+            <label style={lbl}>NICKNAME</label>
+            <input placeholder={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} value={nicknameInput} onChange={e=>setNicknameInput(e.target.value)} autoFocus style={{ marginBottom:14 }} />
+            <div style={{ display:"flex", gap:8 }}>
+              <button className="btn btn-primary" style={{ flex:1 }} onClick={() => {
+                setVehicles(prev=>prev.map(v=>v.id===vehicle.id?{...v,nickname:nicknameInput.trim()}:v));
+                setShowNicknameModal(false);
+              }}>SAVE</button>
+              <button className="btn btn-ghost" onClick={()=>{ setNicknameInput(""); setVehicles(prev=>prev.map(v=>v.id===vehicle.id?{...v,nickname:""}:v)); setShowNicknameModal(false); }}>CLEAR NAME</button>
             </div>
           </div>
         </div>
