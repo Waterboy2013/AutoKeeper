@@ -1,7 +1,7 @@
-// AutoKeeper Service Worker v4
+// AutoKeeper Service Worker v5
 // Caches the app shell and CDN scripts so it works fully offline after first load
 
-const CACHE = 'autokeeper-v4';
+const CACHE = 'autokeeper-v5';
 const PRECACHE = [
   './',
   './index.html',
