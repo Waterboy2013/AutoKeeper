@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- AutoKeeper v1.1.1 | Built: 2026-05-05 | Pre-compiled JS -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -22,7 +23,7 @@
 <body>
   <div id="root"></div>
 
-  <!-- React + Babel (CDN — works offline after first load via service worker) -->
+  <!-- React CDN (works offline after first load via service worker) -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
@@ -32,7 +33,7 @@
 
 
 const STORAGE_KEY = "vehicle-maintenance-app-v3";
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.1.1";
 
 // ─── Maintenance items — ordered most → least frequent ───────────────────────
 const STATIC_ITEMS = [
@@ -1557,8 +1558,26 @@ function App() {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ React.createElement(App, null));
 
+    // Error boundary - catches runtime errors and shows them instead of blank screen
+    class ErrorBoundary extends React.Component {
+      constructor(props) { super(props); this.state = { error: null }; }
+      static getDerivedStateFromError(e) { return { error: e }; }
+      render() {
+        if (this.state.error) {
+          return React.createElement('div', {
+            style: { padding: 32, fontFamily: 'monospace', color: '#e74c3c', background: '#1a0a0a', minHeight: '100vh' }
+          },
+            React.createElement('h2', null, '⚠️ AutoKeeper failed to load'),
+            React.createElement('p', { style: { color: '#aaa', marginTop: 8 } }, 'Error: ' + this.state.error.message),
+            React.createElement('pre', { style: { marginTop: 16, color: '#666', fontSize: 11, whiteSpace: 'pre-wrap' } }, this.state.error.stack)
+          );
+        }
+        return this.props.children;
+      }
+    }
+
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(App, null));
+    root.render(React.createElement(ErrorBoundary, null, React.createElement(App, null)));
   </script>
 
   <script>
