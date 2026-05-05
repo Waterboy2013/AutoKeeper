@@ -1,10 +1,10 @@
-// AutoKeeper Service Worker v6
+// AutoKeeper Service Worker v7
 // Strategy:
 //   index.html, manifest.json → NETWORK FIRST (always get latest, fall back to cache)
 //   CDN assets (React, fonts) → CACHE FIRST (stable, rarely change)
 //   Icons → CACHE FIRST
 
-const CACHE = 'autokeeper-v6';
+const CACHE = 'autokeeper-v7';
 const NETWORK_FIRST = ['index.html', 'manifest.json', '/', ''];
 const CDN_CACHE = [
   'https://unpkg.com/react@18/umd/react.production.min.js',
