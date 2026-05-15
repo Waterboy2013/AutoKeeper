@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- AutoKeeper v1.1.1 | Built: 2026-05-05 | Pre-compiled JS -->
+<!-- AutoKeeper v1.1.4 | Built: 2026-05-05 | Pre-compiled JS -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -30,8 +30,8 @@
   </noscript>
 
   <!-- React CDN (works offline after first load via service worker) -->
-  <script crossorigin="anonymous" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin="anonymous" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" onerror="document.getElementById('root').innerHTML='<div style=padding:40px;font-family:sans-serif;color:#e74c3c><h2>Failed to load</h2><p>Please check your internet connection and reload. If this keeps happening, try opening the link in Safari instead of from the home screen icon.</p></div>'"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 
   <script>
     // AutoKeeper — Constants & Data (plain JS, no compilation needed)
@@ -39,11 +39,12 @@
 
 
 const STORAGE_KEY = "vehicle-maintenance-app-v3";
-const APP_VERSION = "1.1.2";
+const APP_VERSION = "1.1.4";
 
 // ─── Maintenance items — ordered most → least frequent ───────────────────────
 const STATIC_ITEMS = [
   { id:"oil-change",        name:"Oil Change",                        description:"Engine oil & filter replacement",                                      type:"mileage", intervalMiles:5000,  intervalLabel:"Every 5k miles",       icon:"🛢️" },
+  { id:"brake-pads",        name:"Brake Pads",                        description:"Inspect & replace when worn. Most pads last 30–70k miles depending on driving style.", type:"mileage", intervalMiles:50000, intervalLabel:"Inspect every 30–50k miles", icon:"🔴", isInspect:true },
   { id:"engine-air-filter", name:"Engine Air Filter",                 description:"Replace when dirty — improves fuel economy & engine performance",      type:"mileage", intervalMiles:15000, intervalLabel:"Every 15k miles",      icon:"💨", canPostpone:true, postponeMiles:7500 },
   { id:"cabin-air-filter",  name:"Cabin Air Filter",                  description:"Check every 15k miles. Replace when light transparency drops by ~50% when held to sunlight.", type:"mileage", intervalMiles:15000, intervalLabel:"Check every 15k miles", icon:"🌬️", isInspect:true },
   { id:"caliper-grease",    name:"Grease Calipers",                   description:"Apply silicone grease to brake calipers",                              type:"time",    intervalMonths:12,   intervalLabel:"Once a year",          icon:"🔧" },
@@ -167,7 +168,12 @@ function makeTheme(dark) {
   </script>
 
   <script>
-    // AutoKeeper — Pre-compiled (no Babel needed)
+(function waitForReact() {
+  if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+    setTimeout(waitForReact, 50);
+    return;
+  }
+// AutoKeeper — Pre-compiled (no Babel needed)
 const { useState, useEffect } = React;
 function TreadGauge({ depth, dark, T }) {
   const MAX = 12;
@@ -878,6 +884,7 @@ function App() {
   const [showCarfaxModal, setShowCarfaxModal] = useState(false);
   const [carfaxParsing, setCarfaxParsing] = useState(false);
   const [carfaxResult, setCarfaxResult] = useState(null);
+  const [carfaxImportMode, setCarfaxImportMode] = useState("carfax");
   const [dark, setDark] = useState(() => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -1371,25 +1378,57 @@ function App() {
   })()), /* @__PURE__ */ React.createElement("div", { style: { padding: "10px 14px", borderRadius: 8, background: T.okCardBg, border: `1px solid ${T.okBorder}`, fontSize: 11, color: T.okText, marginBottom: 16, lineHeight: 1.6 } }, "\u2713 Regular maintenance doesn't just prevent breakdowns \u2014 it's one of the highest-return financial decisions you can make as a car owner."), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { width: "100%" }, onClick: () => setShowCostPanel(false) }, "CLOSE"))), showCarfaxModal && vehicle && /* @__PURE__ */ React.createElement("div", { className: "overlay", onClick: () => {
     setShowCarfaxModal(false);
     setCarfaxResult(null);
-  } }, /* @__PURE__ */ React.createElement("div", { className: "modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 22, letterSpacing: 3, marginBottom: 4, color: T.text } }, "\u{1F4C4} IMPORT CARFAX"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: T.textFaint, marginBottom: 16, lineHeight: 1.7 } }, "Upload a Carfax PDF report to automatically extract past service history into your log. This uses AI to read the report \u2014 results will vary based on PDF quality and format."), !carfaxResult && !carfaxParsing && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(
+  } }, /* @__PURE__ */ React.createElement("div", { className: "modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 22, letterSpacing: 3, marginBottom: 4, color: T.text } }, "\u{1F4C4} IMPORT SERVICE HISTORY"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 16 } }, ["carfax", "csv"].map((opt) => {
+                const labels = { carfax: "\u{1F4C4} Carfax PDF", csv: "\u{1F4CB} AutoKeeper CSV" };
+                const descs  = { carfax: "AI reads your Carfax report", csv: "Re-import your own export" };
+                const isSel = (carfaxImportMode || "carfax") === opt;
+                return /* @__PURE__ */ React.createElement("div", { key: opt, style: { flex: 1, padding: "8px 10px", borderRadius: 8, cursor: "pointer", background: isSel ? dark ? "#1a0a0a" : "#fff5f5" : T.surface2, border: "2px solid " + (isSel ? T.accent : T.border2) }, onClick: () => { setCarfaxImportMode(opt); setCarfaxResult(null); } },
+                  /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: isSel ? T.accent : T.text, fontWeight: 500 } }, labels[opt]),
+                  /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, marginTop: 2 } }, descs[opt])
+                );
+              })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: T.textFaint, marginBottom: 16, lineHeight: 1.7 } }, (carfaxImportMode || "carfax") === "csv" ? "Upload a CSV previously exported from AutoKeeper. Records are matched back to the correct maintenance items." : "Upload a Carfax PDF \u2014 AI reads the report and extracts service records. Results vary by PDF quality."), !carfaxResult && !carfaxParsing && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(
     "div",
     {
       style: { border: `2px dashed ${T.border2}`, borderRadius: 10, padding: "28px 20px", textAlign: "center", cursor: "pointer", background: T.surface2, marginBottom: 14 },
       onClick: () => document.getElementById("carfax-upload").click()
     },
     /* @__PURE__ */ React.createElement("div", { style: { fontSize: 32, marginBottom: 8 } }, "\u{1F4C2}"),
-    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: T.text, marginBottom: 4 } }, "Tap to select your Carfax PDF"),
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: T.text, marginBottom: 4 } }, (carfaxImportMode || "carfax") === "csv" ? "Tap to select your AutoKeeper CSV" : "Tap to select your Carfax PDF"),
     /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint } }, "PDF files only \xB7 Your file is never uploaded to any server"),
     /* @__PURE__ */ React.createElement(
       "input",
       {
         id: "carfax-upload",
         type: "file",
-        accept: ".pdf,application/pdf",
+        accept: carfaxImportMode === "csv" ? ".csv,text/csv" : ".pdf,application/pdf",
         style: { display: "none" },
         onChange: async (e) => {
           const file = e.target.files[0];
           if (!file) return;
+          if (carfaxImportMode === "csv") {
+            setCarfaxParsing(true);
+            try {
+              const text = await file.text();
+              const lines = text.split("\n").filter((l) => l.trim() && !l.startsWith("#"));
+              const dataLines = lines.slice(1);
+              const records = dataLines.map((line) => {
+                const cols = [];
+                let cur = "", inQ = false;
+                for (const ch of line) {
+                  if (ch === '"') inQ = !inQ;
+                  else if (ch === "," && !inQ) { cols.push(cur); cur = ""; }
+                  else cur += ch;
+                }
+                cols.push(cur);
+                return { date: (cols[0] || "").trim(), service: (cols[1] || "").trim(), miles: (cols[2] || "").trim() || null, notes: (cols[3] || "").trim(), isAutoKeeperCSV: true };
+              }).filter((r) => r.date && r.service);
+              setCarfaxResult(records);
+            } catch (err) {
+              setCarfaxResult("error");
+            }
+            setCarfaxParsing(false);
+            return;
+          }
           setCarfaxParsing(true);
           setCarfaxResult(null);
           try {
@@ -1561,30 +1600,27 @@ function App() {
     return /* @__PURE__ */ React.createElement("div", { className: "overlay", onClick: () => setShowLogModal(null) }, /* @__PURE__ */ React.createElement("div", { className: "modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 18 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 26 } }, item.icon), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 19, letterSpacing: 2, color: T.text } }, item.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint } }, item.description), item.id === "oil-change" && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.accent, marginTop: 2 } }, "Interval: every ", Number(vehicle.oilInterval || 5e3).toLocaleString(), " miles"))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 11 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "DATE COMPLETED"), /* @__PURE__ */ React.createElement("input", { type: "date", value: logEntry.date, onChange: (e) => setLogEntry((p) => ({ ...p, date: e.target.value })) })), item.type === "mileage" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "ODOMETER AT SERVICE (miles)"), /* @__PURE__ */ React.createElement("input", { type: "number", placeholder: vehicle.odometer || "e.g. 75000", value: logEntry.miles, onChange: (e) => setLogEntry((p) => ({ ...p, miles: e.target.value })) })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "NOTES (optional)"), /* @__PURE__ */ React.createElement("textarea", { rows: 3, placeholder: "Shop name, cost, observations...", value: logEntry.notes, onChange: (e) => setLogEntry((p) => ({ ...p, notes: e.target.value })), style: { resize: "vertical" } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", style: { flex: 1 }, onClick: logMaintenance }, "\u2713 LOG SERVICE"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setShowLogModal(null) }, "CANCEL"))), pastLogs.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, borderTop: `1px solid ${T.border}`, paddingTop: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 1, marginBottom: 9 } }, "HISTORY"), [...pastLogs].reverse().map((log, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { fontSize: 11, color: T.textMuted, marginBottom: 5, paddingBottom: 5, borderBottom: `1px solid ${T.historyDivider}` } }, log.date, log.miles ? ` \xB7 ${Number(log.miles).toLocaleString()} mi` : "", log.notes ? ` \xB7 ${log.notes}` : "")))));
   })());
 }
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(/* @__PURE__ */ React.createElement(App, null));
-
-    // Error boundary - catches runtime errors and shows them instead of blank screen
-    class ErrorBoundary extends React.Component {
-      constructor(props) { super(props); this.state = { error: null }; }
-      static getDerivedStateFromError(e) { return { error: e }; }
-      render() {
-        if (this.state.error) {
-          return React.createElement('div', {
-            style: { padding: 32, fontFamily: 'monospace', color: '#e74c3c', background: '#1a0a0a', minHeight: '100vh' }
-          },
-            React.createElement('h2', null, '⚠️ AutoKeeper failed to load'),
-            React.createElement('p', { style: { color: '#aaa', marginTop: 8 } }, 'Error: ' + this.state.error.message),
-            React.createElement('pre', { style: { marginTop: 16, color: '#666', fontSize: 11, whiteSpace: 'pre-wrap' } }, this.state.error.stack)
-          );
-        }
-        return this.props.children;
-      }
+// Error boundary catches runtime errors
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(e) { return { error: e }; }
+  render() {
+    if (this.state.error) {
+      return React.createElement("div", {
+        style: { padding: 32, fontFamily: "monospace", color: "#e74c3c", background: "#1a0a0a", minHeight: "100vh" }
+      },
+        React.createElement("h2", null, "AutoKeeper failed to load"),
+        React.createElement("p", { style: { color: "#aaa", marginTop: 8 } }, "Error: " + this.state.error.message),
+        React.createElement("pre", { style: { marginTop: 16, color: "#666", fontSize: 11, whiteSpace: "pre-wrap" } }, this.state.error.stack)
+      );
     }
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(ErrorBoundary, null, React.createElement(App, null)));
-  </script>
+    return this.props.children;
+  }
+}
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(ErrorBoundary, null, React.createElement(App, null)));
+})();
+</script>
 
   <script>
     // Register service worker for offline support

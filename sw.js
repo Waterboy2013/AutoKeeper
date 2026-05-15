@@ -1,14 +1,14 @@
-// AutoKeeper Service Worker v7
+// AutoKeeper Service Worker v10
 // Strategy:
 //   index.html, manifest.json → NETWORK FIRST (always get latest, fall back to cache)
 //   CDN assets (React, fonts) → CACHE FIRST (stable, rarely change)
 //   Icons → CACHE FIRST
 
-const CACHE = 'autokeeper-v7';
+const CACHE = 'autokeeper-v10';
 const NETWORK_FIRST = ['index.html', 'manifest.json', '/', ''];
 const CDN_CACHE = [
-  'https://unpkg.com/react@18/umd/react.production.min.js',
-  'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js',
   'https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap',
 ];
 
@@ -32,7 +32,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   const path = url.pathname.split('/').pop() || '';
   const isSameOrigin = url.origin === self.location.origin;
-  const isCDN = url.hostname.includes('unpkg.com') || url.hostname.includes('fonts.g');
+  const isCDN = url.hostname.includes('unpkg.com') || url.hostname.includes('cdnjs.cloudflare.com') || url.hostname.includes('fonts.g');
 
   // Network-first for app HTML and manifest
   if (isSameOrigin && (NETWORK_FIRST.includes(path) || url.pathname.endsWith('/'))) {
