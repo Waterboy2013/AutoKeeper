@@ -1,10 +1,10 @@
-// AutoKeeper Service Worker v11
+// AutoKeeper Service Worker v12
 // Strategy:
 //   index.html, manifest.json → NETWORK FIRST (always get latest, fall back to cache)
 //   CDN assets (React, fonts) → CACHE FIRST (stable, rarely change)
 //   Icons → CACHE FIRST
 
-const CACHE = 'autokeeper-v11';
+const CACHE = 'autokeeper-v12';
 const NETWORK_FIRST = ['index.html', 'manifest.json', '/', ''];
 const CDN_CACHE = [
   'https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js',

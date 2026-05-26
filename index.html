@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- AutoKeeper v1.1.5 | Built: 2026-05-05 | Pre-compiled JS -->
+<!-- AutoKeeper v1.2.0 | Built: 2026-05-05 | Pre-compiled JS -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -39,7 +39,7 @@
 
 
 const STORAGE_KEY = "vehicle-maintenance-app-v3";
-const APP_VERSION = "1.1.5";
+const APP_VERSION = "1.2.0";
 
 // ─── Maintenance items — ordered most → least frequent ───────────────────────
 const STATIC_ITEMS = [
@@ -110,6 +110,23 @@ function getTreadLevel(depth32) {
 
 // Natural wear estimate: ~1/32" per 8–10k miles (conservative)
 const WEAR_RATE_PER_MILE = 1 / 9000;
+
+const BRAKE_PAD = {
+  new:     { min:8,   label:"New",          color:"#27ae60", bg_d:"#0a2615", bg_l:"#e8f8ee" },
+  good:    { min:6,   label:"Good",         color:"#2ecc71", bg_d:"#0d2b1a", bg_l:"#f0faf4" },
+  monitor: { min:4,   label:"Monitor Wear", color:"#f39c12", bg_d:"#2d2009", bg_l:"#fef8ec" },
+  replace: { min:2,   label:"Replace Soon", color:"#e67e22", bg_d:"#2d1a05", bg_l:"#fef3e2" },
+  urgent:  { min:0,   label:"REPLACE NOW",  color:"#e74c3c", bg_d:"#3d1414", bg_l:"#fef0f0" },
+};
+function getBrakePadLevel(mm) {
+  const d = Number(mm);
+  if (isNaN(d) || d < 0) return null;
+  if (d >= BRAKE_PAD.new.min)     return "new";
+  if (d >= BRAKE_PAD.good.min)    return "good";
+  if (d >= BRAKE_PAD.monitor.min) return "monitor";
+  if (d >= BRAKE_PAD.replace.min) return "replace";
+  return "urgent";
+}
 
 function estimatedTread(baseTread, baseMiles, currentMiles) {
   if (!baseTread || !baseMiles || !currentMiles) return null;
@@ -885,6 +902,8 @@ function App() {
   const [carfaxParsing, setCarfaxParsing] = useState(false);
   const [carfaxResult, setCarfaxResult] = useState(null);
   const [carfaxImportMode, setCarfaxImportMode] = useState("carfax");
+  const [showBrakePadModal, setShowBrakePadModal] = useState(false);
+  const [brakePadEntry, setBrakePadEntry] = useState({ date: new Date().toISOString().slice(0, 10), fl: "", fr: "", rl: "", rr: "", notes: "" });
   const [dark, setDark] = useState(() => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -1326,7 +1345,45 @@ function App() {
         },
         "POSTPONE"
       ))),
-      item.isInspect && !vehicle.skipped?.[item.id] && (getItemStatus(item) === "overdue" || getItemStatus(item) === "due-soon") && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 6, fontSize: 9, color: T.dueSoonText, lineHeight: 1.5 } }, "\u{1F4A1} Hold filter up to sunlight \u2014 replace if light transmission is reduced by half or more."),
+      item.isInspect && item.id === "cabin-air-filter" && !vehicle.skipped?.[item.id] && (getItemStatus(item) === "overdue" || getItemStatus(item) === "due-soon") && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 6, fontSize: 9, color: T.dueSoonText, lineHeight: 1.5 } }, "\u{1F4A1} Hold filter up to sunlight \u2014 replace if light transmission is reduced by half or more."),
+      item.id === "brake-pads" && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, paddingTop: 7, borderTop: `1px solid ${T.border}` }, onClick: (e) => e.stopPropagation() },
+        (() => {
+          const padLogs = getVehicleLogs(vehicle.id)["brake-pad-thickness"] || [];
+          const last = padLogs[padLogs.length - 1];
+          const positions = [["fl","FL"],["fr","FR"],["rl","RL"],["rr","RR"]];
+          const order = ["urgent","replace","monitor","good","new","null"];
+          const worstLevel = last ? positions.reduce((worst, [k]) => {
+            if (!last[k]) return worst;
+            const lv = getBrakePadLevel(last[k]);
+            return order.indexOf(lv) < order.indexOf(worst) ? lv : worst;
+          }, "new") : null;
+          const worstInfo = worstLevel ? BRAKE_PAD[worstLevel] : null;
+          return /* @__PURE__ */ React.createElement(React.Fragment, null,
+            last && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 7 } },
+              /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 1, marginBottom: 5 } }, "LAST PAD THICKNESS \u2014 ", last.date),
+              /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, flexWrap: "wrap" } },
+                positions.map(([k, label]) => {
+                  if (!last[k]) return null;
+                  const lv = getBrakePadLevel(last[k]);
+                  const info = BRAKE_PAD[lv];
+                  return /* @__PURE__ */ React.createElement("div", { key: k, style: { textAlign: "center", padding: "4px 8px", borderRadius: 6, background: dark ? (info?.bg_d || T.surface2) : (info?.bg_l || T.surface2), border: `1px solid ${info?.color || T.border}` } },
+                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint } }, label),
+                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: info?.color || T.text, fontWeight: 600 } }, last[k]),
+                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 8, color: T.textFaint } }, "mm")
+                  );
+                })
+              ),
+              worstInfo && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 5, display: "inline-flex", alignItems: "center", gap: 5, padding: "2px 8px", borderRadius: 10, background: dark ? worstInfo.bg_d : worstInfo.bg_l, border: `1px solid ${worstInfo.color}` } },
+                /* @__PURE__ */ React.createElement("div", { style: { width: 7, height: 7, borderRadius: "50%", background: worstInfo.color } }),
+                /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10, color: worstInfo.color, fontWeight: 500 } }, worstInfo.label)
+              )
+            ),
+            /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 10, padding: "4px 12px" },
+              onClick: () => { setShowBrakePadModal(true); setBrakePadEntry({ date: new Date().toISOString().slice(0, 10), fl: "", fr: "", rl: "", rr: "", notes: "" }); }
+            }, "\u{1F4CF} MEASURE PADS")
+          );
+        })()
+      ),
       vLogs.length === 0 && !vehicle.skipped?.[item.id] && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.noRecordText, marginTop: 3 } }, "No records yet \u2014 tap to log"),
       vehicle.skipped?.[item.id] && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint, marginTop: 3, fontStyle: "italic" } }, "Not tracked for your location")
     );
@@ -1593,7 +1650,88 @@ function App() {
       onChange: (e) => setEditLogEntry((p) => ({ ...p, entry: { ...p.entry, notes: e.target.value } })),
       style: { resize: "vertical" }
     }
-  )), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 4 } }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", style: { flex: 1 }, onClick: saveEditLog }, "\u2713 SAVE CHANGES"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setEditLogEntry(null) }, "CANCEL"))))), showAddVehicle && /* @__PURE__ */ React.createElement("div", { className: "overlay", onClick: () => setShowAddVehicle(false) }, /* @__PURE__ */ React.createElement("div", { className: "modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 22, letterSpacing: 3, marginBottom: 18, color: T.text } }, "ADD VEHICLE"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 11 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "NICKNAME (optional)"), /* @__PURE__ */ React.createElement("input", { placeholder: "e.g. Daily Driver, Weekend Truck", value: newVehicle.nickname, onChange: (e) => setNewVehicle((p) => ({ ...p, nickname: e.target.value })) })), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "YEAR *"), /* @__PURE__ */ React.createElement("input", { placeholder: "2019", type: "number", min: "1900", max: "2030", value: newVehicle.year, onChange: (e) => setNewVehicle((p) => ({ ...p, year: e.target.value })) })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "MAKE *"), /* @__PURE__ */ React.createElement("select", { value: newVehicle.make, onChange: (e) => setNewVehicle((p) => ({ ...p, make: e.target.value })) }, /* @__PURE__ */ React.createElement("option", { value: "" }, "Select..."), MAKES.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, m)))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "MODEL *"), /* @__PURE__ */ React.createElement("input", { placeholder: "Camry...", value: newVehicle.model, onChange: (e) => setNewVehicle((p) => ({ ...p, model: e.target.value })) }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "VIN (optional)"), /* @__PURE__ */ React.createElement("input", { placeholder: "17-character VIN", maxLength: 17, value: newVehicle.vin, onChange: (e) => setNewVehicle((p) => ({ ...p, vin: e.target.value.toUpperCase() })) })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "CURRENT ODOMETER (miles)"), /* @__PURE__ */ React.createElement("input", { placeholder: "75000", type: "number", value: newVehicle.odometer, onChange: (e) => setNewVehicle((p) => ({ ...p, odometer: e.target.value })) })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 6 } }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", style: { flex: 1 }, onClick: addVehicle, disabled: !newVehicle.make || !newVehicle.model || !newVehicle.year }, "ADD VEHICLE"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setShowAddVehicle(false) }, "CANCEL"))))), showLogModal && vehicle && (() => {
+  )), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 4 } }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", style: { flex: 1 }, onClick: saveEditLog }, "\u2713 SAVE CHANGES"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setEditLogEntry(null) }, "CANCEL"))))), showBrakePadModal && vehicle && /* @__PURE__ */ React.createElement("div", { className: "overlay", onClick: () => setShowBrakePadModal(false) },
+        /* @__PURE__ */ React.createElement("div", { className: "modal", onClick: (e) => e.stopPropagation() },
+          /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 20, letterSpacing: 3, marginBottom: 4, color: T.text } }, "\u{1F4CF} BRAKE PAD THICKNESS"),
+          /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: T.textFaint, marginBottom: 16, lineHeight: 1.6 } }, "Enter thickness in millimeters per wheel. New pads are 10\u201312mm. Replace at or before 2mm."),
+          /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 } },
+            [["fl","Front Left"],["fr","Front Right"],["rl","Rear Left"],["rr","Rear Right"]].map(([k, label]) => {
+              const val = brakePadEntry[k];
+              const lv = val ? getBrakePadLevel(val) : null;
+              const info = lv ? BRAKE_PAD[lv] : null;
+              return /* @__PURE__ */ React.createElement("div", { key: k, style: { padding: "10px 12px", borderRadius: 8, background: info ? dark ? info.bg_d : info.bg_l : T.surface2, border: `1px solid ${info?.color || T.border2}` } },
+                /* @__PURE__ */ React.createElement("label", { style: { ...lbl, color: info?.color || T.textFaint } }, label),
+                /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } },
+                  /* @__PURE__ */ React.createElement("input", { type: "number", step: "0.5", min: "0", max: "20", placeholder: "\u2014", value: brakePadEntry[k],
+                    onChange: (e) => setBrakePadEntry((p) => ({ ...p, [k]: e.target.value })),
+                    style: { fontSize: 18, fontWeight: 700, textAlign: "center", color: info?.color || T.text, padding: "6px 8px" }
+                  }),
+                  /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: T.textFaint } }, "mm")
+                ),
+                info && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: info.color, marginTop: 2 } }, info.label)
+              );
+            })
+          ),
+          /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 12 } },
+            /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 1, marginBottom: 5 } }, "THICKNESS REFERENCE"),
+            /* @__PURE__ */ React.createElement("div", { style: { height: 8, borderRadius: 4, overflow: "hidden", background: dark ? "#1e2030" : "#e0e3ee", marginBottom: 4 } },
+              /* @__PURE__ */ React.createElement("div", { style: { height: "100%", background: "linear-gradient(to right, #e74c3c 0%, #e74c3c 17%, #e67e22 17%, #e67e22 33%, #f39c12 33%, #f39c12 50%, #2ecc71 50%, #2ecc71 67%, #27ae60 67%)" } })
+            ),
+            /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 8, color: T.textFaint } },
+              /* @__PURE__ */ React.createElement("span", null, "0"),
+              /* @__PURE__ */ React.createElement("span", null, "2 replace"),
+              /* @__PURE__ */ React.createElement("span", null, "4 monitor"),
+              /* @__PURE__ */ React.createElement("span", null, "6 good"),
+              /* @__PURE__ */ React.createElement("span", null, "8+ new")
+            ),
+            /* @__PURE__ */ React.createElement("div", { style: { marginTop: 6, fontSize: 10, color: T.dueSoonText } }, "\u26A0\uFE0F US legal min ~3.2mm. Replace at 3mm or when squealing starts.")
+          ),
+          /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 } },
+            /* @__PURE__ */ React.createElement("div", null,
+              /* @__PURE__ */ React.createElement("label", { style: lbl }, "DATE MEASURED"),
+              /* @__PURE__ */ React.createElement("input", { type: "date", value: brakePadEntry.date, onChange: (e) => setBrakePadEntry((p) => ({ ...p, date: e.target.value })) })
+            ),
+            /* @__PURE__ */ React.createElement("div", null,
+              /* @__PURE__ */ React.createElement("label", { style: lbl }, "NOTES (optional)"),
+              /* @__PURE__ */ React.createElement("textarea", { rows: 2, placeholder: "Shop, rotor condition, squealing\u2026", value: brakePadEntry.notes, onChange: (e) => setBrakePadEntry((p) => ({ ...p, notes: e.target.value })), style: { resize: "vertical" } })
+            )
+          ),
+          /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } },
+            /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", style: { flex: 1 },
+              onClick: () => {
+                const entry = { ...brakePadEntry, ts: Date.now() };
+                setLogs((prev) => ({
+                  ...prev,
+                  [vehicle.id]: {
+                    ...(prev[vehicle.id] || {}),
+                    "brake-pad-thickness": [...((prev[vehicle.id] || {})["brake-pad-thickness"] || []), entry],
+                    "brake-pads": [...((prev[vehicle.id] || {})["brake-pads"] || []), { date: brakePadEntry.date, miles: vehicle.odometer || "", notes: `Pad thickness \u2014 FL:${brakePadEntry.fl||"\u2014"} FR:${brakePadEntry.fr||"\u2014"} RL:${brakePadEntry.rl||"\u2014"} RR:${brakePadEntry.rr||"\u2014"} mm`, ts: Date.now() + 1 }]
+                  }
+                }));
+                setShowBrakePadModal(false);
+              }
+            }, "\u2713 SAVE MEASUREMENTS"),
+            /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setShowBrakePadModal(false) }, "CANCEL")
+          ),
+          (getVehicleLogs(vehicle.id)["brake-pad-thickness"] || []).length > 0 && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 16, borderTop: `1px solid ${T.border}`, paddingTop: 12 } },
+            /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 1, marginBottom: 8 } }, "MEASUREMENT HISTORY"),
+            [...(getVehicleLogs(vehicle.id)["brake-pad-thickness"] || [])].reverse().slice(0, 5).map((m, i) => {
+              const vals = [m.fl, m.fr, m.rl, m.rr].filter(Boolean).map(Number);
+              const minVal = vals.length ? Math.min(...vals) : null;
+              const minLv = minVal !== null ? getBrakePadLevel(minVal) : null;
+              const minInfo = minLv ? BRAKE_PAD[minLv] : null;
+              return /* @__PURE__ */ React.createElement("div", { key: i, style: { fontSize: 11, color: T.textMuted, marginBottom: 5, paddingBottom: 5, borderBottom: `1px solid ${T.historyDivider}` } },
+                /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between" } },
+                  /* @__PURE__ */ React.createElement("span", null, m.date),
+                  minInfo && /* @__PURE__ */ React.createElement("span", { style: { color: minInfo.color, fontSize: 10 } }, minInfo.label)
+                ),
+                /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint, marginTop: 2 } }, `FL:${m.fl||"\u2014"} FR:${m.fr||"\u2014"} RL:${m.rl||"\u2014"} RR:${m.rr||"\u2014"} mm`)
+              );
+            })
+          )
+        )
+      ),
+      showAddVehicle && /* @__PURE__ */ React.createElement("div", { className: "overlay", onClick: () => setShowAddVehicle(false) }, /* @__PURE__ */ React.createElement("div", { className: "modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 22, letterSpacing: 3, marginBottom: 18, color: T.text } }, "ADD VEHICLE"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 11 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "NICKNAME (optional)"), /* @__PURE__ */ React.createElement("input", { placeholder: "e.g. Daily Driver, Weekend Truck", value: newVehicle.nickname, onChange: (e) => setNewVehicle((p) => ({ ...p, nickname: e.target.value })) })), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "YEAR *"), /* @__PURE__ */ React.createElement("input", { placeholder: "2019", type: "number", min: "1900", max: "2030", value: newVehicle.year, onChange: (e) => setNewVehicle((p) => ({ ...p, year: e.target.value })) })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "MAKE *"), /* @__PURE__ */ React.createElement("select", { value: newVehicle.make, onChange: (e) => setNewVehicle((p) => ({ ...p, make: e.target.value })) }, /* @__PURE__ */ React.createElement("option", { value: "" }, "Select..."), MAKES.map((m) => /* @__PURE__ */ React.createElement("option", { key: m, value: m }, m)))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "MODEL *"), /* @__PURE__ */ React.createElement("input", { placeholder: "Camry...", value: newVehicle.model, onChange: (e) => setNewVehicle((p) => ({ ...p, model: e.target.value })) }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "VIN (optional)"), /* @__PURE__ */ React.createElement("input", { placeholder: "17-character VIN", maxLength: 17, value: newVehicle.vin, onChange: (e) => setNewVehicle((p) => ({ ...p, vin: e.target.value.toUpperCase() })) })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: lbl }, "CURRENT ODOMETER (miles)"), /* @__PURE__ */ React.createElement("input", { placeholder: "75000", type: "number", value: newVehicle.odometer, onChange: (e) => setNewVehicle((p) => ({ ...p, odometer: e.target.value })) })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 6 } }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", style: { flex: 1 }, onClick: addVehicle, disabled: !newVehicle.make || !newVehicle.model || !newVehicle.year }, "ADD VEHICLE"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: () => setShowAddVehicle(false) }, "CANCEL"))))), showLogModal && vehicle && (() => {
     const item = STATIC_ITEMS.find((i) => i.id === showLogModal);
     if (!item) return null;
     const pastLogs = getVehicleLogs(vehicle.id)[showLogModal] || [];
