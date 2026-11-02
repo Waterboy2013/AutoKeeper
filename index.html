@@ -39,7 +39,7 @@
 
 
 const STORAGE_KEY = "vehicle-maintenance-app-v3";
-const APP_VERSION = "1.2.4";
+const APP_VERSION = "1.2.5";
 
 // ─── Maintenance items — ordered most → least frequent ───────────────────────
 const STATIC_ITEMS = [
@@ -209,115 +209,6 @@ function TreadGauge({ depth, dark, T }) {
     { label: "8", pct: 8 / MAX * 100, color: "#2ecc71" },
     { label: "12", pct: 12 / MAX * 100, color: "#27ae60" }
   ];
-  function renderMaintenanceCard(item) {
-    const vLogs   = getVehicleLogs(vehicle.id);
-    const logs_i  = vLogs[item.id] || [];
-    const status  = getItemStatus(item);
-    const STATUS_COLORS = {
-      overdue:    { bg: T.overdueCardBg,  border: T.overdueBorder,  text: T.overdueText,  label: "OVERDUE"  },
-      "due-soon": { bg: T.dueSoonCardBg,  border: T.dueSoonBorder,  text: T.dueSoonText,  label: "DUE SOON" },
-      ok:         { bg: T.okCardBg,       border: T.okBorder,       text: T.okText,       label: "OK"       },
-      unknown:    { bg: T.unknownCardBg,  border: T.unknownBorder,  text: T.unknownText,  label: "LOG IT"   },
-    };
-    const sc      = STATUS_COLORS[status] || STATUS_COLORS.unknown;
-    const last    = logs_i[logs_i.length - 1];
-    const skipped = vehicle.skipped?.[item.id];
-    let pct = 0;
-    if (last && !skipped) {
-      if (item.type === "mileage") {
-        const interval = effectiveInterval(item);
-        const driven   = Number(vehicle.odometer || 0) - Number(last.miles || 0);
-        pct = Math.min(100, Math.max(0, (driven / interval) * 100));
-      } else if (item.type === "time") {
-        const monthsAgo = (Date.now() - new Date(last.date).getTime()) / (1e3*60*60*24*30.44);
-        pct = Math.min(100, Math.max(0, (monthsAgo / item.intervalMonths) * 100));
-      }
-    }
-    return /* @__PURE__ */ React.createElement("div", {
-      key: item.id, className: "card",
-      style: { borderLeft: `3px solid ${sc.border}`, background: sc.bg, cursor: "pointer", padding: 14 },
-      onClick: () => { setShowLogModal(item.id); setLogEntry({ date: new Date().toISOString().slice(0,10), miles: vehicle.odometer||"", notes: "" }); }
-    },
-      /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 } },
-        /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } },
-          /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 2 } },
-            /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16 } }, item.icon),
-            /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, fontWeight: 500, color: T.text } }, item.name)
-          ),
-          /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint } }, item.intervalLabel)
-        ),
-        /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 8px", borderRadius: 10, background: sc.border, fontSize: 9, color: "#fff", fontWeight: 600, flexShrink: 0, marginLeft: 8 } }, sc.label)
-      ),
-      /* @__PURE__ */ React.createElement("div", { style: { height: 4, borderRadius: 2, background: T.border, overflow: "hidden", marginBottom: 6 } },
-        /* @__PURE__ */ React.createElement("div", { style: { height: "100%", borderRadius: 2, width: `${pct}%`, background: sc.border, transition: "width 0.4s" } })
-      ),
-      last && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textMuted, marginBottom: 4 } },
-        `Last: ${last.date}${last.miles ? " \u00b7 " + Number(last.miles).toLocaleString() + " mi" : ""}${last.notes ? " \u00b7 " + last.notes : ""}`
-      ),
-      item.canPostpone && !skipped && status === "overdue" && /* @__PURE__ */ React.createElement("div", {
-        style: { marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 },
-        onClick: e => e.stopPropagation()
-      },
-        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: T.textFaint, flex: 1 } }, `Not ready? Recheck in ${(item.postponeMiles||0).toLocaleString()} mi`),
-        /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 9, padding: "2px 8px" },
-          onClick: () => setLogs(prev => ({ ...prev, [vehicle.id]: { ...(prev[vehicle.id]||{}), [item.id]: [...((prev[vehicle.id]||{})[item.id]||[]), { date: new Date().toISOString().slice(0,10), miles: vehicle.odometer||"", notes: `Postponed \u2014 recheck in ${(item.postponeMiles||0).toLocaleString()} mi`, isPostpone: true, ts: Date.now() }] } }))
-        }, "POSTPONE")
-      ),
-      item.isInspect && item.id === "cabin-air-filter" && !skipped && (status === "overdue" || status === "due-soon") &&
-        /* @__PURE__ */ React.createElement("div", { style: { marginTop: 5, fontSize: 9, color: T.dueSoonText } }, "\u{1F4A1} Hold filter up to sunlight \u2014 replace if light drops by half."),
-      (item.id === "brake-pads-front" || item.id === "brake-pads-rear") && /* @__PURE__ */ React.createElement("div", {
-        style: { marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.border}` },
-        onClick: e => e.stopPropagation()
-      },
-        (() => {
-          const axle    = item.id === "brake-pads-front" ? "front" : "rear";
-          const logKey  = `brake-pad-thickness-${axle}`;
-          const padLogs = vLogs[logKey] || [];
-          const lastPad = padLogs[padLogs.length - 1];
-          const labels  = axle === "front" ? [["left","FL"],["right","FR"]] : [["left","RL"],["right","RR"]];
-          const order   = ["urgent","replace","monitor","good","new"];
-          const worst   = lastPad ? labels.reduce((w,[k]) => { if (!lastPad[k]) return w; const lv = getBrakePadLevel(lastPad[k]); return order.indexOf(lv) < order.indexOf(w) ? lv : w; }, "new") : null;
-          const wInfo   = worst ? BRAKE_PAD[worst] : null;
-          return /* @__PURE__ */ React.createElement(React.Fragment, null,
-            lastPad && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 6 } },
-              /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 1, marginBottom: 4 } }, `LAST PAD THICKNESS \u2014 ${lastPad.date}`),
-              /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5 } },
-                labels.map(([k, label]) => {
-                  if (!lastPad[k]) return null;
-                  const lv = getBrakePadLevel(lastPad[k]);
-                  const info = BRAKE_PAD[lv];
-                  return /* @__PURE__ */ React.createElement("div", { key: k, style: { textAlign: "center", padding: "3px 8px", borderRadius: 6, background: dark ? info?.bg_d : info?.bg_l, border: `1px solid ${info?.color}` } },
-                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint } }, label),
-                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: info?.color } }, lastPad[k]),
-                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 8, color: T.textFaint } }, "mm")
-                  );
-                })
-              ),
-              wInfo && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 10, background: dark ? wInfo.bg_d : wInfo.bg_l, border: `1px solid ${wInfo.color}` } },
-                /* @__PURE__ */ React.createElement("div", { style: { width: 7, height: 7, borderRadius: "50%", background: wInfo.color } }),
-                /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10, color: wInfo.color, fontWeight: 500 } }, wInfo.label)
-              )
-            ),
-            /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 10, padding: "4px 12px" },
-              onClick: () => { setShowBrakePadModal(axle); setBrakePadEntry({ date: new Date().toISOString().slice(0,10), left: "", right: "", notes: "", axle }); }
-            }, "\u{1F4CF} MEASURE PADS")
-          );
-        })()
-      ),
-      SKIPPABLE_ITEMS[item.id] !== undefined && /* @__PURE__ */ React.createElement("div", {
-        style: { marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" },
-        onClick: e => e.stopPropagation()
-      },
-        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: T.textFaint } }, skipped ? "Not tracking for your location" : "Not applicable for your climate?"),
-        /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 9, padding: "2px 8px" },
-          onClick: () => setVehicles(prev => prev.map(v => v.id === vehicle.id ? { ...v, skipped: { ...(v.skipped||{}), [item.id]: !skipped } } : v))
-        }, skipped ? "TRACK" : "SKIP")
-      ),
-      !last && !skipped && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.noRecordText, marginTop: 3 } }, "No records yet \u2014 tap to log"),
-      skipped && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint, marginTop: 3, fontStyle: "italic" } }, "Not tracked for your location")
-    );
-  }
-
   return /* @__PURE__ */ React.createElement("div", { style: { marginTop: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", height: 8, borderRadius: 4, overflow: "hidden", background: dark ? "#1e2030" : "#e0e3ee", marginBottom: 4 } }, /* @__PURE__ */ React.createElement("div", { style: {
     position: "absolute",
     left: 0,
@@ -1034,11 +925,24 @@ function App() {
         setLogs(d.logs || {});
         if (d.vehicles?.length) setActiveVehicle(d.vehicles[0].id);
       }
-    } catch {
+      window.__akLoaded = true;
+    } catch (e) {
+      window.__akLoaded = false;
+      window.__akLoadFailed = true;
     }
   }, []);
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ vehicles, logs }));
+    if (!window.__akLoaded) return;
+    try {
+      const prev = localStorage.getItem(STORAGE_KEY);
+      const next = JSON.stringify({ vehicles, logs });
+      if (prev && prev !== next) {
+        const pd = JSON.parse(prev);
+        if (pd.vehicles && pd.vehicles.length) localStorage.setItem(STORAGE_KEY + "-backup", prev);
+      }
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch (e) {
+    }
   }, [vehicles, logs]);
   async function requestNotifPermission() {
     if (typeof Notification === "undefined" || !Notification.requestPermission) return;
@@ -1278,6 +1182,115 @@ function App() {
     .modal{background:${T.surface};border:1px solid ${T.border2};border-radius:14px;padding:24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto}
     .sec-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:3px;color:${T.textMuted};margin-bottom:12px}
   `;
+  function renderMaintenanceCard(item) {
+    const vLogs   = getVehicleLogs(vehicle.id);
+    const logs_i  = vLogs[item.id] || [];
+    const status  = getItemStatus(item);
+    const STATUS_COLORS = {
+      overdue:    { bg: T.overdueCardBg,  border: T.overdueBorder,  text: T.overdueText,  label: "OVERDUE"  },
+      "due-soon": { bg: T.dueSoonCardBg,  border: T.dueSoonBorder,  text: T.dueSoonText,  label: "DUE SOON" },
+      ok:         { bg: T.okCardBg,       border: T.okBorder,       text: T.okText,       label: "OK"       },
+      unknown:    { bg: T.unknownCardBg,  border: T.unknownBorder,  text: T.unknownText,  label: "LOG IT"   },
+    };
+    const sc      = STATUS_COLORS[status] || STATUS_COLORS.unknown;
+    const last    = logs_i[logs_i.length - 1];
+    const skipped = vehicle.skipped?.[item.id];
+    let pct = 0;
+    if (last && !skipped) {
+      if (item.type === "mileage") {
+        const interval = effectiveInterval(item);
+        const driven   = Number(vehicle.odometer || 0) - Number(last.miles || 0);
+        pct = Math.min(100, Math.max(0, (driven / interval) * 100));
+      } else if (item.type === "time") {
+        const monthsAgo = (Date.now() - new Date(last.date).getTime()) / (1e3*60*60*24*30.44);
+        pct = Math.min(100, Math.max(0, (monthsAgo / item.intervalMonths) * 100));
+      }
+    }
+    return /* @__PURE__ */ React.createElement("div", {
+      key: item.id, className: "card",
+      style: { borderLeft: `3px solid ${sc.border}`, background: sc.bg, cursor: "pointer", padding: 14 },
+      onClick: () => { setShowLogModal(item.id); setLogEntry({ date: new Date().toISOString().slice(0,10), miles: vehicle.odometer||"", notes: "" }); }
+    },
+      /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 } },
+        /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } },
+          /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 2 } },
+            /* @__PURE__ */ React.createElement("span", { style: { fontSize: 16 } }, item.icon),
+            /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, fontWeight: 500, color: T.text } }, item.name)
+          ),
+          /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint } }, item.intervalLabel)
+        ),
+        /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 8px", borderRadius: 10, background: sc.border, fontSize: 9, color: "#fff", fontWeight: 600, flexShrink: 0, marginLeft: 8 } }, sc.label)
+      ),
+      /* @__PURE__ */ React.createElement("div", { style: { height: 4, borderRadius: 2, background: T.border, overflow: "hidden", marginBottom: 6 } },
+        /* @__PURE__ */ React.createElement("div", { style: { height: "100%", borderRadius: 2, width: `${pct}%`, background: sc.border, transition: "width 0.4s" } })
+      ),
+      last && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textMuted, marginBottom: 4 } },
+        `Last: ${last.date}${last.miles ? " \u00b7 " + Number(last.miles).toLocaleString() + " mi" : ""}${last.notes ? " \u00b7 " + last.notes : ""}`
+      ),
+      item.canPostpone && !skipped && status === "overdue" && /* @__PURE__ */ React.createElement("div", {
+        style: { marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 },
+        onClick: e => e.stopPropagation()
+      },
+        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: T.textFaint, flex: 1 } }, `Not ready? Recheck in ${(item.postponeMiles||0).toLocaleString()} mi`),
+        /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 9, padding: "2px 8px" },
+          onClick: () => setLogs(prev => ({ ...prev, [vehicle.id]: { ...(prev[vehicle.id]||{}), [item.id]: [...((prev[vehicle.id]||{})[item.id]||[]), { date: new Date().toISOString().slice(0,10), miles: vehicle.odometer||"", notes: `Postponed \u2014 recheck in ${(item.postponeMiles||0).toLocaleString()} mi`, isPostpone: true, ts: Date.now() }] } }))
+        }, "POSTPONE")
+      ),
+      item.isInspect && item.id === "cabin-air-filter" && !skipped && (status === "overdue" || status === "due-soon") &&
+        /* @__PURE__ */ React.createElement("div", { style: { marginTop: 5, fontSize: 9, color: T.dueSoonText } }, "\u{1F4A1} Hold filter up to sunlight \u2014 replace if light drops by half."),
+      (item.id === "brake-pads-front" || item.id === "brake-pads-rear") && /* @__PURE__ */ React.createElement("div", {
+        style: { marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.border}` },
+        onClick: e => e.stopPropagation()
+      },
+        (() => {
+          const axle    = item.id === "brake-pads-front" ? "front" : "rear";
+          const logKey  = `brake-pad-thickness-${axle}`;
+          const padLogs = vLogs[logKey] || [];
+          const lastPad = padLogs[padLogs.length - 1];
+          const labels  = axle === "front" ? [["left","FL"],["right","FR"]] : [["left","RL"],["right","RR"]];
+          const order   = ["urgent","replace","monitor","good","new"];
+          const worst   = lastPad ? labels.reduce((w,[k]) => { if (!lastPad[k]) return w; const lv = getBrakePadLevel(lastPad[k]); return order.indexOf(lv) < order.indexOf(w) ? lv : w; }, "new") : null;
+          const wInfo   = worst ? BRAKE_PAD[worst] : null;
+          return /* @__PURE__ */ React.createElement(React.Fragment, null,
+            lastPad && /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 6 } },
+              /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 1, marginBottom: 4 } }, `LAST PAD THICKNESS \u2014 ${lastPad.date}`),
+              /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5 } },
+                labels.map(([k, label]) => {
+                  if (!lastPad[k]) return null;
+                  const lv = getBrakePadLevel(lastPad[k]);
+                  const info = BRAKE_PAD[lv];
+                  return /* @__PURE__ */ React.createElement("div", { key: k, style: { textAlign: "center", padding: "3px 8px", borderRadius: 6, background: dark ? info?.bg_d : info?.bg_l, border: `1px solid ${info?.color}` } },
+                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint } }, label),
+                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: info?.color } }, lastPad[k]),
+                    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 8, color: T.textFaint } }, "mm")
+                  );
+                })
+              ),
+              wInfo && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 10, background: dark ? wInfo.bg_d : wInfo.bg_l, border: `1px solid ${wInfo.color}` } },
+                /* @__PURE__ */ React.createElement("div", { style: { width: 7, height: 7, borderRadius: "50%", background: wInfo.color } }),
+                /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10, color: wInfo.color, fontWeight: 500 } }, wInfo.label)
+              )
+            ),
+            /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 10, padding: "4px 12px" },
+              onClick: () => { setShowBrakePadModal(axle); setBrakePadEntry({ date: new Date().toISOString().slice(0,10), left: "", right: "", notes: "", axle }); }
+            }, "\u{1F4CF} MEASURE PADS")
+          );
+        })()
+      ),
+      SKIPPABLE_ITEMS[item.id] !== undefined && /* @__PURE__ */ React.createElement("div", {
+        style: { marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" },
+        onClick: e => e.stopPropagation()
+      },
+        /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9, color: T.textFaint } }, skipped ? "Not tracking for your location" : "Not applicable for your climate?"),
+        /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", style: { fontSize: 9, padding: "2px 8px" },
+          onClick: () => setVehicles(prev => prev.map(v => v.id === vehicle.id ? { ...v, skipped: { ...(v.skipped||{}), [item.id]: !skipped } } : v))
+        }, skipped ? "TRACK" : "SKIP")
+      ),
+      !last && !skipped && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.noRecordText, marginTop: 3 } }, "No records yet \u2014 tap to log"),
+      skipped && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: T.textFaint, marginTop: 3, fontStyle: "italic" } }, "Not tracked for your location")
+    );
+  }
+
   return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: T.bg, color: T.text, fontFamily: "'DM Mono','Courier New',monospace" } }, /* @__PURE__ */ React.createElement("style", null, css), /* @__PURE__ */ React.createElement("div", { style: { borderBottom: `1px solid ${T.border}`, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, background: T.surface, position: "sticky", top: 0, zIndex: 10 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: 3, color: T.text, lineHeight: 1 } }, /* @__PURE__ */ React.createElement("span", { style: { color: T.accent } }, "AUTO"), "KEEPER"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: T.textFaint, letterSpacing: 2, marginTop: 2 } }, "VEHICLE MAINTENANCE TRACKER"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 8, color: T.textFaint, letterSpacing: 1, marginTop: 1, opacity: 0.6 } }, "v", APP_VERSION)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center" } }, /* @__PURE__ */ React.createElement(
     "button",
     {
